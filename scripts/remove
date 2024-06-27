@@ -30,10 +30,6 @@ pkill -f seaf-server || true
 pkill -f ccnet-server || true
 pkill -f seahub || true
 
-if [ "$YNH_APP_PURGE" -eq 1 ]; then
-    ynh_script_progression --message="Removing logs..."
-    ynh_secure_remove --file=/var/log/"$app"
-fi
 ynh_script_progression --message="Removing code..."
 ynh_secure_remove --file=/var/www/"$app"
 ynh_secure_remove --file=/opt/yunohost/"$app"

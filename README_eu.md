@@ -27,14 +27,7 @@ It's a Enterprise file sync and share platform with high reliability and perform
 
 ## Pantaila-argazkiak
 
-![Seafile(r)en pantaila-argazkia](./doc/screenshots/access-logs.jpg)
-![Seafile(r)en pantaila-argazkia](./doc/screenshots/drive-client.png)
-![Seafile(r)en pantaila-argazkia](./doc/screenshots/file-history.png)
-![Seafile(r)en pantaila-argazkia](./doc/screenshots/file-locking.jpg)
-![Seafile(r)en pantaila-argazkia](./doc/screenshots/mobile-ios-client.jpg)
-![Seafile(r)en pantaila-argazkia](./doc/screenshots/sharing-dialog.png)
-![Seafile(r)en pantaila-argazkia](./doc/screenshots/sync-client.jpg)
-![Seafile(r)en pantaila-argazkia](./doc/screenshots/wiki_en.png)
+![Seafile(r)en pantaila-argazkia](./doc/screenshots/screenshot.png)
 
 ## Dokumentazioa eta baliabideak
 

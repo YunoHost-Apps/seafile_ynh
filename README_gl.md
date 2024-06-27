@@ -27,14 +27,7 @@ It's a Enterprise file sync and share platform with high reliability and perform
 
 ## Capturas de pantalla
 
-![Captura de pantalla de Seafile](./doc/screenshots/access-logs.jpg)
-![Captura de pantalla de Seafile](./doc/screenshots/drive-client.png)
-![Captura de pantalla de Seafile](./doc/screenshots/file-history.png)
-![Captura de pantalla de Seafile](./doc/screenshots/file-locking.jpg)
-![Captura de pantalla de Seafile](./doc/screenshots/mobile-ios-client.jpg)
-![Captura de pantalla de Seafile](./doc/screenshots/sharing-dialog.png)
-![Captura de pantalla de Seafile](./doc/screenshots/sync-client.jpg)
-![Captura de pantalla de Seafile](./doc/screenshots/wiki_en.png)
+![Captura de pantalla de Seafile](./doc/screenshots/screenshot.png)
 
 ## Documentación e recursos
 

@@ -27,14 +27,7 @@ It's a Enterprise file sync and share platform with high reliability and perform
 
 ## 截图
 
-![Seafile 的截图](./doc/screenshots/access-logs.jpg)
-![Seafile 的截图](./doc/screenshots/drive-client.png)
-![Seafile 的截图](./doc/screenshots/file-history.png)
-![Seafile 的截图](./doc/screenshots/file-locking.jpg)
-![Seafile 的截图](./doc/screenshots/mobile-ios-client.jpg)
-![Seafile 的截图](./doc/screenshots/sharing-dialog.png)
-![Seafile 的截图](./doc/screenshots/sync-client.jpg)
-![Seafile 的截图](./doc/screenshots/wiki_en.png)
+![Seafile 的截图](./doc/screenshots/screenshot.png)
 
 ## 文档与资源
 
