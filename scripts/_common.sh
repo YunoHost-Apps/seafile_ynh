@@ -43,6 +43,8 @@ run_seafile_cmd() {
 }
 
 install_source() {
+    # set correct seafile version in patch
+    ynh_replace --match="__SEAFILE_VERSION__" --replace="$seafile_version" --file="$YNH_APP_BASEDIR"/patches/main/import_ldap_user_when_authenticated_from_remoteUserBackend.patch
     ynh_setup_source_custom --dest_dir="$install_dir"/seafile_image --full_replace
     mkdir -p "$install_dir"/seafile_image/opt/seafile/{seafile-data,seahub-data,conf,ccnet,logs}
     grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$install_dir"/seafile_image/etc/passwd
