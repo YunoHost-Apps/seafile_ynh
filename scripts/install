@@ -64,6 +64,10 @@ seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_s
 ynh_app_setting_set --key=seahub_secret_key --value="$seahub_secret_key"
 
 # Update seafile config files
+if [ "$(lsb_release -c -s)" == bullseye ]; then
+    # Fix header for retro compability on Yunohost 11
+    ynh_replace --match="'HTTP_YNH_USER_EMAIL'" --replace="'HTTP_EMAIL'" --file="../conf/seahub_settings.py"
+fi
 ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
 ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
 ynh_config_add --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf

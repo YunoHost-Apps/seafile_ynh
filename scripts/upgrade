@@ -155,6 +155,10 @@ run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/minor-upgr
 clean_url_in_db_config
 
 # Update seafile config files
+if [ "$(lsb_release -c -s)" == bullseye ]; then
+    # Fix header for retro compability on Yunohost 11
+    ynh_replace --match="'HTTP_YNH_USER_EMAIL'" --replace="'HTTP_EMAIL'" --file="../conf/seahub_settings.py"
+fi
 ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
 ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
 ynh_config_add --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf

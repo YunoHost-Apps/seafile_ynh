@@ -83,7 +83,7 @@ ENABLE_REMOTE_USER_AUTHENTICATION = True
 
 # Optional, HTTP header, which is configured in your web server conf file,
 # used for Seafile to get user's unique id, default value is 'HTTP_REMOTE_USER'.
-REMOTE_USER_HEADER = 'HTTP_EMAIL'
+REMOTE_USER_HEADER = 'HTTP_YNH_USER_EMAIL'
 
 # Optional, when the value of HTTP_REMOTE_USER is not a valid email address，
 # Seafile will build a email-like unique id from the value of 'REMOTE_USER_HEADER'
