@@ -8,21 +8,15 @@
 source ./experimental_helper.sh
 source ./_common.sh
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
-
-seafile_version="$(ynh_app_upstream_version)"
-seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
-
 #=================================================
 # STANDARD REMOVE
 #=================================================
 
-ynh_script_progression --message="Stoping services..."
+ynh_script_progression "Stoping services..."
 
 # Stop all services
-ynh_systemd_action --service_name=seafile --action=stop
-ynh_systemd_action --service_name=seahub --action=stop
+ynh_systemctl --service=seafile --action=stop
+ynh_systemctl --service=seahub --action=stop
 
 # Force to kill all process in case of a process is not stoped cleanly
 pkill -f seafile-controller || true
@@ -30,35 +24,35 @@ pkill -f seaf-server || true
 pkill -f ccnet-server || true
 pkill -f seahub || true
 
-ynh_script_progression --message="Removing code..."
-ynh_secure_remove --file=/var/www/"$app"
-ynh_secure_remove --file=/opt/yunohost/"$app"
+ynh_script_progression "Removing code..."
+ynh_safe_rm /var/www/"$app"
+ynh_safe_rm /opt/yunohost/"$app"
 
 # Remove databases
-ynh_script_progression --message="Removing databases..."
-db_helper=ynh_"mysql"_remove_db
-$db_helper --db_name ccnetdb --db_user seafile
-$db_helper --db_name seahubdb --db_user seafile
+ynh_script_progression "Removing databases..."
+ynh_''mysql_drop_db ccnetdb
+ynh_''mysql_drop_db seahubdb
 
 # Remove systemd service
-ynh_script_progression --message="Removing systemd units..."
-ynh_remove_systemd_config --service=seafile
-ynh_remove_systemd_config --service=seahub
+ynh_script_progression "Removing systemd units..."
+ynh_config_remove_systemd seafile
+ynh_config_remove_systemd seahub
 
 # Remove nginx config
-ynh_script_progression --message="Removing nginx configuration..."
-ynh_remove_nginx_config
+ynh_script_progression "Removing nginx configuration..."
+ynh_config_remove_nginx
 
 # Remove logrotate
-ynh_remove_logrotate
+ynh_config_remove_logrotate
 
 # Remove the dedicated fail2ban config
-ynh_script_progression --message="Removing fail2ban configuration..."
-ynh_remove_fail2ban_config
+ynh_script_progression "Removing fail2ban configuration..."
+ynh_config_remove_fail2ban
 
-ynh_script_progression --message="Removing seafile service..."
+ynh_script_progression "Removing seafile service..."
 yunohost service remove seafile
 yunohost service remove seahub
 
-ynh_script_progression --message="Removal of $app completed" --last
+ynh_script_progression "Removal of $app completed"
+
 sleep 1

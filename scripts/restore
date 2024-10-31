@@ -8,70 +8,61 @@
 source ../settings/scripts/experimental_helper.sh
 source ../settings/scripts/_common.sh
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
-
-seafile_version="$(ynh_app_upstream_version)"
-seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
-
-ynh_script_progression --message="Loading settings..."
+ynh_script_progression "Loading settings..."
 
 #=================================================
 # STANDARD RESTORATION STEPS
 #=================================================
 
 # Restore all config and data
-ynh_script_progression --message="Restoring files..." --weight=10
-ynh_restore
-
+ynh_script_progression "Restoring files..."
+ynh_restore_everything
 # Restore mysql dump
-ynh_script_progression --message="Restoring database..." --weight=3
-db_helper=ynh_"mysql"_setup_db
-$db_helper --db_user "$db_user" --db_name ccnetdb --db_pwd "$db_pwd"
-$db_helper --db_user "$db_user" --db_name seahubdb --db_pwd "$db_pwd"
+ynh_script_progression "Restoring database..."
+ynh_''mysql_create_db ccnetdb "$db_user" "$db_pwd"
+ynh_''mysql_create_db seahubdb "$db_user" "$db_pwd"
 su -c "mysql -u ${app} -p$db_pwd $db_name < ${YNH_CWD}/seafiledb.dmp"
 su -c "mysql -u ${app} -p$db_pwd ccnetdb < ${YNH_CWD}/ccnetdb.dmp"
 su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
 
 #=================================================
-# GENERIC FINALIZATION
-#=================================================
 
 # Add logrotate
-ynh_script_progression --message="Configuring log rotation..."
+ynh_script_progression "Configuring log rotation..."
 mkdir -p /var/log/"$app"
-ynh_use_logrotate --logfile="$install_dir"/logs
+ynh_config_add_logrotate "$install_dir"/logs
 
 # Set all permissions
-ynh_script_progression --message="Protecting directory..."
+ynh_script_progression "Protecting directory..."
 set_permission
 
 # Enable service and start seafile
-ynh_script_progression --message="Reconfiguring application..."
+ynh_script_progression "Reconfiguring application..."
 systemctl daemon-reload
 systemctl enable seafile --quiet
 systemctl enable seahub --quiet
 
 # Add Seafile to YunoHost's monitored services
-ynh_script_progression --message="Register seafile service..."
+ynh_script_progression "Register seafile service..."
 yunohost service add seafile --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
 
-ynh_script_progression --message="Reloading services..."
+ynh_script_progression "Reloading services..."
 
 # Reload nginx
 systemctl reload nginx.service
 
 # Reload fail2ban
-ynh_systemd_action --service_name=fail2ban --action=reload
+ynh_systemctl --service=fail2ban --action=reload
 
 # Avoid the current effect
 sleep 5
 
 # Restart service
-ynh_script_progression --message="Starting seafile services..." --weight=3
-ynh_systemd_action --service_name=seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
-ynh_systemd_action --service_name=seahub -l "Started Seafile hub." -p "systemd"
+ynh_script_progression "Starting seafile services..."
+ynh_systemctl --service=seafile --wait_until="spawned seaf-server, pid " --log_path=/var/log/seafile/controller.log
+sleep 2
+ynh_systemctl --service=seahub --wait_until="Seahub is started" --log_path="systemd"
 sleep 2
 
-ynh_script_progression --message="Restoration completed for $app" --last
+ynh_script_progression "Restoration completed for $app"

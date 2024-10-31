@@ -1,3 +1,5 @@
+# WARNING: Don't edit this file. All change will be removed after each app upgrade
+
 import os
 
 daemon = True

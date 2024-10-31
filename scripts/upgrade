@@ -9,24 +9,18 @@ source ./experimental_helper.sh
 source ./_common.sh
 source ./ynh_setup_source
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
-
-seafile_version="$(ynh_app_upstream_version)"
 installed_version="${YNH_APP_CURRENT_VERSION/~ynh*/}"
-
-seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 ensure_vars_set
 
-if [ "$YNH_APP_CURRENT_VERSION" == '-' ] || ynh_compare_current_package_version --comparison=le --version='7.0~ynh1'; then
+if [ "$YNH_APP_CURRENT_VERSION" == '-' ] || ynh_app_upgrading_from_version_before_or_equal_to '7.0~ynh1'; then
     ynh_die "Upgrade from this version not supported"
 fi
 
-ynh_script_progression --message="Stoping services..."
+ynh_script_progression "Stoping services..."
 
-ynh_systemd_action --service_name=seafile --action=stop
-ynh_systemd_action --service_name=seahub --action=stop
+ynh_systemctl --service=seafile --action=stop
+ynh_systemctl --service=seahub --action=stop
 sleep 5
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
@@ -42,15 +36,12 @@ if mysqlshow | grep -q seafiledb; then
         $mysqlconn -e "RENAME TABLE seafiledb.$name to $db_name.$name";
     done;
     $mysqlconn -e "DROP DATABASE seafiledb"
-    ynh_replace_string --match_string='db_name = seafiledb' --replace_string='db_name = seafile' --target_file="$install_dir"/conf/seafile.conf
+    ynh_replace --match='db_name = seafiledb' --replace='db_name = seafile' --file="$install_dir"/conf/seafile.conf
     sed -i "s|password\s*=\s*.*^|password = $db_pwd|g" "$install_dir"/conf/seafile.conf
 fi
 
 # Set missing settings
-if [ -z "${seahub_secret_key:-}" ]; then
-    seahub_secret_key="$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)"
-    ynh_app_setting_set --app="$app" --key=seahub_secret_key --value="$seahub_secret_key"
-fi
+ynh_app_setting_set_default --key=seahub_secret_key --value="$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)"
 
 #
 # Update data dir if needed
@@ -97,15 +88,15 @@ if [ ! -L "$install_dir"/logs ]; then
     ln -s /var/log/"${app}" "$install_dir"/logs
 fi
 
-ynh_script_progression --message="Upgrading source files..." --weight=6
+ynh_script_progression "Upgrading source files..."
 
 # Download new version from sources
-ynh_script_progression --message="Installing sources files..." --weight=7
+ynh_script_progression "Installing sources files..."
 if [ "$YNH_APP_UPGRADE_TYPE" == UPGRADE_APP ]; then
     install_source
 fi
 
-ynh_script_progression --message="Configuring application..."
+ynh_script_progression "Configuring application..."
 
 # permission to execute update script and expect helper
 set_permission
@@ -128,7 +119,7 @@ case "$installed_version" in
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/seahub.sh" python-env python3 "/opt/seafile/seafile-server-$seafile_version/seahub/manage.py" migrate_file_comment
 
     # Update seafile by script
-    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$seafile_code/upgrade/upgrade_7.0_7.1.sh"
+    ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_7.0_7.1.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_7.0_7.1.sh"
 
     # Fix seafile data link. Look like that the upgrade script of seafile don't always work correctly
@@ -139,90 +130,91 @@ case "$installed_version" in
     ln -s "$data_dir" "$install_dir"/seafile-data
 ;&
 "7.1."* )
-    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$seafile_code/upgrade/upgrade_8.0_9.0.sh"
+    ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_8.0_9.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh"
 ;&
 "8.0."* )
-    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$seafile_code/upgrade/upgrade_7.1_8.0.sh"
+    ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_7.1_8.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_7.1_8.0.sh"
 ;&
 "9."* )
-    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$seafile_code/upgrade/upgrade_8.0_9.0.sh"
+    ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_8.0_9.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh"
 ;&
 "10."* )
-    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$seafile_code/upgrade/upgrade_9.0_10.0.sh"
+    ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_9.0_10.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_9.0_10.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/seahub.sh" python-env python3 "/opt/seafile/seafile-server-$seafile_version/migrate_ldapusers.py"
 ;&
 esac
 
-ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$seafile_code/upgrade/minor-upgrade.sh"
+ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/minor-upgrade.sh"
 run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/minor-upgrade.sh"
 
 # Clean url in config in DB
 clean_url_in_db_config
 
 # Update seafile config files
-ynh_add_config --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
-ynh_add_config --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
-ynh_add_config --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
-ynh_add_config --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
-ynh_add_config --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
-ynh_add_config --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
+if [ "$(lsb_release -c -s)" == bullseye ]; then
+    # Fix header for retro compability on Yunohost 11
+    ynh_replace --match="'HTTP_YNH_USER_EMAIL'" --replace="'HTTP_EMAIL'" --file="../conf/seahub_settings.py"
+fi
+ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
+ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
+ynh_config_add --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
+ynh_config_add --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
+ynh_config_add --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
+ynh_config_add --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
 
 # Fix local warning
-ynh_replace_string --match_string=en_US.UTF-8 --replace_string="${LANG:-'en_US.UTF-8'}" --target_file="$seafile_code/seahub.sh"
+ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seafile_code/seahub.sh"
 
-#=================================================
-# STANDARD UPGRADE STEPS
 #=================================================
 
 # Config nginx
-ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
+ynh_config_add_nginx 'seahub_port fileserver_port webdav_port'
 
 # Add Seafile Server to startup
-ynh_script_progression --message="Updating systemd units..."
-ynh_add_systemd_config --service=seafile --template=seafile.service
-ynh_add_systemd_config --service=seahub --template=seahub.service
+ynh_script_progression "Updating systemd units..."
+ynh_config_add_systemd --service=seafile --template=seafile.service
+ynh_config_add_systemd --service=seahub --template=seahub.service
 
-#=================================================
-# GENERIC FINALIZATION
 #=================================================
 
 # Set all permissions
-ynh_script_progression --message="Protecting directory..."
+ynh_script_progression "Protecting directory..."
 set_permission
 
 # Add logrotate
-ynh_script_progression --message="Configuring log rotation..."
-ynh_use_logrotate --logfile=/var/log/"$app" --nonappend
+ynh_script_progression "Configuring log rotation..."
+ynh_config_add_logrotate /var/log/"$app"
 
 # Add fail2ban
-ynh_script_progression --message="Configuring fail2ban..." --weight=10
-ynh_add_fail2ban_config --use_template
+ynh_script_progression "Configuring fail2ban..."
+ynh_config_add_fail2ban
 
 # register yunohost service
-ynh_script_progression --message="Register seafile service..."
+ynh_script_progression "Register seafile service..."
 yunohost service add seafile --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
 
 # delete seafile cache
 
 # restart seafile server
-ynh_script_progression --message="Starting seafile services..." --weight=3
+ynh_script_progression "Starting seafile services..."
 sleep 5
-ynh_systemd_action --service_name=memcached.service -p "systemd"
-ynh_systemd_action --service_name=seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
-ynh_systemd_action --service_name=seahub -l "Started Seafile hub." -p "systemd"
+ynh_systemctl --service=memcached.service -p "systemd"
+ynh_systemctl --service=seafile --wait_until="spawned seaf-server, pid " --log_path=/var/log/seafile/controller.log
+sleep 2
+ynh_systemctl --service=seahub --wait_until="Seahub is started" --log_path="systemd"
 sleep 2
 
 # remove old version files
-ynh_script_progression --message="Cleaning system and updating settings..."
+ynh_script_progression "Cleaning system and updating settings..."
 for f in "$install_dir"/seafile-server-*;do
     if [[ ! "$f" =~ ${seafile_version//./\\.}|latest ]]; then
-        ynh_secure_remove --file="$f"
+        ynh_safe_rm "$f"
     fi
 done
 
-ynh_script_progression --message="Upgrade of $app completed" --last
+ynh_script_progression "Upgrade of $app completed"
