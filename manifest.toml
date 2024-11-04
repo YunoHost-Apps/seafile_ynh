@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "11.0.12~ynh2"
+version = "11.0.13~ynh1"
 
 maintainers = ["Josué Tille"]
 
@@ -120,11 +120,11 @@ ram.runtime = "500M"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/seafile-mc:11.0.12"
-    amd64.sha256 = "31bdc49cf9a2ec558550aef32ba66616d495790451f5de41e7d4f4740c9b73d1"
+    amd64.url = "seafileltd/seafile-mc:11.0.13"
+    amd64.sha256 = "8c1443ae28807aaf1cbb3652e386de72fdffe84696c11e3f6e2eaba1289e17ee"
 
-    arm64.url = "seafileltd/seafile-mc:11.0.12"
-    arm64.sha256 = "59c0fdf549436c1c0d36d57d2be0cc5cd6435975ee45bb9b4238fa4bc6a0455d"
+    arm64.url = "seafileltd/seafile-mc:11.0.13"
+    arm64.sha256 = "e9a9fd48ed7d0e6d6e3fbe0e3e055bdb6b2f10901af81c795a5e2acfcd3df360"
 
     [resources.apt]
     packages = ["mariadb-server", "memcached"]
