@@ -5,7 +5,7 @@
 
 # YunoHost 上的 Seafile
 
-[![集成程度](https://dash.yunohost.org/integration/seafile.svg)](https://dash.yunohost.org/appci/app/seafile) ![工作状态](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
+[![集成程度](https://dash.yunohost.org/integration/seafile.svg)](https://ci-apps.yunohost.org/ci/apps/seafile/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
 
 [![使用 YunoHost 安装 Seafile](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
 
@@ -21,7 +21,7 @@ Seafile is an open Source Cloud Storage application.
 It's a Enterprise file sync and share platform with high reliability and performance. It's a file hosting platform with high reliability and performance. Put files on your own server. Sync and share files across different devices, or access all the files as a virtual disk.
 
 
-**分发版本：** 11.0.9~ynh1
+**分发版本：** 11.0.12~ynh2
 
 **演示：** <https://demo.seafile.com>
 

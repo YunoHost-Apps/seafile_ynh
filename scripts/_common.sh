@@ -1,6 +1,11 @@
+source /usr/share/yunohost/helpers
+
 #=================================================
 # SET ALL CONSTANTS
 #=================================================
+
+readonly seafile_version=$(ynh_app_upstream_version)
+readonly seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 readonly time_zone="$(cat /etc/timezone)"
 readonly python_version="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2)"
@@ -31,13 +36,15 @@ fi
 #=================================================
 
 run_seafile_cmd() {
-    ynh_exec_warn_less systemd-run --wait --uid="$app" --gid="$app" \
+    ynh_hide_warnings systemd-run --wait --uid="$app" --gid="$app" \
         --property=RootDirectory="$install_dir"/seafile_image \
         --property="BindPaths=$systemd_seafile_bind_mount" \
         $@
 }
 
 install_source() {
+    # set correct seafile version in patch
+    ynh_replace --match="__SEAFILE_VERSION__" --replace="$seafile_version" --file="$YNH_APP_BASEDIR"/patches/main/import_ldap_user_when_authenticated_from_remoteUserBackend.patch
     ynh_setup_source_custom --dest_dir="$install_dir"/seafile_image --full_replace
     mkdir -p "$install_dir"/seafile_image/opt/seafile/{seafile-data,seahub-data,conf,ccnet,logs}
     grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$install_dir"/seafile_image/etc/passwd
@@ -47,8 +54,10 @@ install_source() {
 }
 
 set_permission() {
+    chown "$app:$app" "$install_dir"
+    chmod u=rwx,g=rx,o= "$install_dir"
     chown -R "$app:$app" "$install_dir"/{conf,ccnet}
-    chmod -R u+rwX,g-w,o= "$install_dir"/{conf,ccnet}
+    chmod -R u+rwX,g+rX-w,o= "$install_dir"/{conf,ccnet}
     chown -R "$app:$app" "$install_dir"/seafile_image/opt/seafile
     chmod -R u+rwX,g-w,o= "$install_dir"/seafile_image/opt/seafile
 
@@ -67,6 +76,7 @@ set_permission() {
     test -e "$install_dir"/seahub-data && setfacl -m user:www-data:rX "$data_dir"
     test -e "$install_dir"/seahub-data && setfacl -R -m user:www-data:rX "$data_dir"/seahub-data
 
+    chmod u=rwx,g=rx,o= "$data_dir"
     find "$data_dir" \(   \! -perm -o= \
                      -o \! -user "$app" \
                      -o \! -group "$app" \) \
@@ -76,14 +86,12 @@ set_permission() {
 
 clean_url_in_db_config() {
     sql_request='DELETE FROM `constance_config` WHERE `constance_key`= "SERVICE_URL"'
-    ynh_mysql_execute_as_root --sql="$sql_request" --database=seahubdb
+    ynh_mysql_db_shell <<< "$sql_request" --database=seahubdb
     sql_request='DELETE FROM `constance_config` WHERE `constance_key`= "FILE_SERVER_ROOT"'
-    ynh_mysql_execute_as_root --sql="$sql_request" --database=seahubdb
+    ynh_mysql_db_shell <<< "$sql_request" --database=seahubdb
 }
 
 ensure_vars_set() {
-    if [ -z "${jwt_private_key_notification_server:-}" ]; then
-        jwt_private_key_notification_server=$(ynh_string_random -l 32)
-        ynh_app_setting_set --app="$app" --key=jwt_private_key_notification_server --value="$jwt_private_key_notification_server"
-    fi
+    ynh_app_setting_set_default --key=jwt_private_key_notification_server --value=$(ynh_string_random -l 32)
+    ynh_app_setting_set_default --key=protect_against_basic_auth_spoofing --value=false
 }

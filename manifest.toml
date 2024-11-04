@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "11.0.9~ynh1"
+version = "11.0.12~ynh2"
 
 maintainers = ["Josué Tille"]
 
@@ -18,7 +18,8 @@ code = "https://github.com/haiwen/seafile-server"
 cpe = "cpe:2.3:a:seafile:seafile"
 
 [integration]
-yunohost = ">= 11.2.13"
+yunohost = ">= 11.2.30"
+helpers_version = "2.1"
 architectures = ["amd64", "arm64"]
 multi_instance = false
 ldap = true
@@ -62,12 +63,10 @@ ram.runtime = "500M"
 [resources]
     [resources.system_user]
     allow_email = true
-    home = "/opt/yunohost/__APP__"
 
     [resources.install_dir]
-    dir = "/opt/yunohost/__APP__"
     owner = "__APP__:rwx"
-    group = "www-data:rx"
+    group = "www-data:r-x"
 
     [resources.data_dir]
     dir = "/home/yunohost.app/__APP__"
@@ -121,11 +120,11 @@ ram.runtime = "500M"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/seafile-mc:11.0.9"
-    amd64.sha256 = "564f122eae31e96c24be12c25affec7618fa574abf2ba381fadb8467e8e4ad4e"
+    amd64.url = "seafileltd/seafile-mc:11.0.12"
+    amd64.sha256 = "31bdc49cf9a2ec558550aef32ba66616d495790451f5de41e7d4f4740c9b73d1"
 
-    arm64.url = "seafileltd/seafile-mc:11.0.9"
-    arm64.sha256 = "57a78b0f80e8ecf272fca5fc3f2aff685239849f222bd358fbac4be0d4b280a2"
+    arm64.url = "seafileltd/seafile-mc:11.0.12"
+    arm64.sha256 = "59c0fdf549436c1c0d36d57d2be0cc5cd6435975ee45bb9b4238fa4bc6a0455d"
 
     [resources.apt]
     packages = ["mariadb-server", "memcached"]

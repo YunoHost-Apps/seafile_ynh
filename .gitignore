@@ -221,3 +221,4 @@ pip-log.txt
 *-swp
 
 auto_update_config.sh
+*.sw[op]
