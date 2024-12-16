@@ -130,20 +130,20 @@ case "$installed_version" in
     ln -s "$data_dir" "$install_dir"/seafile-data
 ;&
 "7.1."* )
-    ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_8.0_9.0.sh"
-    run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh"
-;&
-"8.0."* )
     ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_7.1_8.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_7.1_8.0.sh"
 ;&
-"9."* )
+"8."* )
     ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_8.0_9.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh"
 ;&
-"10."* )
+"9."* )
     ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_9.0_10.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_9.0_10.0.sh"
+;&
+"10."* )
+    ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_10.0_11.0.sh"
+    run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_10.0_11.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/seahub.sh" python-env python3 "/opt/seafile/seafile-server-$seafile_version/migrate_ldapusers.py"
 ;&
 esac
