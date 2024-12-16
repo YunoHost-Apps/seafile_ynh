@@ -5,7 +5,9 @@ It shall NOT be edited by hand.
 
 # Seafile for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/seafile.svg)](https://ci-apps.yunohost.org/ci/apps/seafile/) ![Working status](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
+[![Integration level](https://apps.yunohost.org/badge/integration/seafile)](https://ci-apps.yunohost.org/ci/apps/seafile/)
+![Working status](https://apps.yunohost.org/badge/state/seafile)
+![Maintenance status](https://apps.yunohost.org/badge/maintained/seafile)
 
 [![Install Seafile with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
 

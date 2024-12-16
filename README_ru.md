@@ -5,7 +5,9 @@
 
 # Seafile для YunoHost
 
-[![Уровень интеграции](https://dash.yunohost.org/integration/seafile.svg)](https://ci-apps.yunohost.org/ci/apps/seafile/) ![Состояние работы](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![Состояние сопровождения](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
+[![Уровень интеграции](https://apps.yunohost.org/badge/integration/seafile)](https://ci-apps.yunohost.org/ci/apps/seafile/)
+![Состояние работы](https://apps.yunohost.org/badge/state/seafile)
+![Состояние сопровождения](https://apps.yunohost.org/badge/maintained/seafile)
 
 [![Установите Seafile с YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
 

@@ -5,7 +5,9 @@ EZ editatu eskuz.
 
 # Seafile YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/seafile.svg)](https://ci-apps.yunohost.org/ci/apps/seafile/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
+[![Integrazio maila](https://apps.yunohost.org/badge/integration/seafile)](https://ci-apps.yunohost.org/ci/apps/seafile/)
+![Funtzionamendu egoera](https://apps.yunohost.org/badge/state/seafile)
+![Mantentze egoera](https://apps.yunohost.org/badge/maintained/seafile)
 
 [![Instalatu Seafile YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
 

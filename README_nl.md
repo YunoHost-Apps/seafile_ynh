@@ -5,7 +5,9 @@ Hij mag NIET handmatig aangepast worden.
 
 # Seafile voor Yunohost
 
-[![Integratieniveau](https://dash.yunohost.org/integration/seafile.svg)](https://ci-apps.yunohost.org/ci/apps/seafile/) ![Mate van functioneren](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![Onderhoudsstatus](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
+[![Integratieniveau](https://apps.yunohost.org/badge/integration/seafile)](https://ci-apps.yunohost.org/ci/apps/seafile/)
+![Mate van functioneren](https://apps.yunohost.org/badge/state/seafile)
+![Onderhoudsstatus](https://apps.yunohost.org/badge/maintained/seafile)
 
 [![Seafile met Yunohost installeren](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
 
