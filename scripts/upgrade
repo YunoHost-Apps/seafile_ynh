@@ -88,6 +88,10 @@ if [ ! -L "$install_dir"/logs ]; then
     ln -s /var/log/"${app}" "$install_dir"/logs
 fi
 
+# Ensure all data dir are created
+mkdir -p /var/log/{"$app","$app"-notification-server}
+mkdir -p "$data_dir"/{seafile-data,seahub-data,notification-data}
+
 ynh_script_progression "Upgrading source files..."
 
 # Download new version from sources
@@ -146,10 +150,17 @@ case "$installed_version" in
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_10.0_11.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/seahub.sh" python-env python3 "/opt/seafile/seafile-server-$seafile_version/migrate_ldapusers.py"
 ;&
+"11."* )
+    ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_11.0_12.0.sh"
+    run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_11.0_12.0.sh"
+;&
 esac
 
 ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/minor-upgrade.sh"
 run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/minor-upgrade.sh"
+
+# Clean expired sessions, cf: https://manual.seafile.com/12.0/administration/clean_database/
+run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version//seahub.sh" python-env python3 seahub/manage.py clearsessions
 
 # Clean url in config in DB
 clean_url_in_db_config
@@ -161,10 +172,11 @@ if [ "$(lsb_release -c -s)" == bullseye ]; then
 fi
 ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
 ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
-ynh_config_add --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
 ynh_config_add --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
 ynh_config_add --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
 ynh_config_add --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
+ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
+ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
 
 # Fix local warning
 ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seafile_code/seahub.sh"
