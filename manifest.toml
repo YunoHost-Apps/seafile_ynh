@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "11.0.13~ynh1"
+version = "12.0.4~ynh1"
 
 maintainers = ["Josué Tille"]
 
@@ -120,11 +120,24 @@ ram.runtime = "500M"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/seafile-mc:11.0.13"
-    amd64.sha256 = "8c1443ae28807aaf1cbb3652e386de72fdffe84696c11e3f6e2eaba1289e17ee"
+    amd64.url = "seafileltd/seafile-mc:12.0.4"
+    amd64.sha256 = "1e2747ff717364f4309793f171d20f402b36b13b81a5c897e43619778089b585"
 
-    arm64.url = "seafileltd/seafile-mc:11.0.13"
-    arm64.sha256 = "e9a9fd48ed7d0e6d6e3fbe0e3e055bdb6b2f10901af81c795a5e2acfcd3df360"
+    # For now arm64 seem not available
+    # arm64.url = "seafileltd/seafile-mc:12.0.4"
+    # arm64.sha256 = "e9a9fd48ed7d0e6d6e3fbe0e3e055bdb6b2f10901af81c795a5e2acfcd3df360"
+
+    [resources.sources.notification_server]
+    format = "docker"
+    extract = true
+    prefetch = false
+
+    amd64.url = "seafileltd/notification-server:12.0.5"
+    amd64.sha256 = "c99980378218287116ea98cf67a3a9bfbe57507595ffa159c9bceaef1422a0b4"
+
+    # For now arm64 seem not available
+    # arm64.url = "seafileltd/notification-server:12.0.5"
+    # arm64.sha256 = "e9a9fd48ed7d0e6d6e3fbe0e3e055bdb6b2f10901af81c795a5e2acfcd3df360"
 
     [resources.apt]
     packages = ["mariadb-server", "memcached"]

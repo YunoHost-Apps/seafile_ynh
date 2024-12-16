@@ -22,8 +22,8 @@ if [ -n "$(ls -A "$data_dir")" ]; then
     mv -t "$old_data_dir_path" "$data_dir"/*
 fi
 
-mkdir -p /var/log/"$app"
-mkdir -p "$data_dir"/{seafile-data,seahub-data}
+mkdir -p /var/log/{"$app","$app"-notification-server}
+mkdir -p "$data_dir"/{seafile-data,seahub-data,notification-data}
 mkdir -p "$install_dir"/{conf,ccnet}
 
 # Download new version from sources
@@ -38,6 +38,9 @@ ynh_''mysql_create_db seahubdb "$db_user" "$db_pwd"
 
 ynh_script_progression "Configuring application..."
 
+ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
+ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
+
 # Run install script
 set_permission
 ynh_replace_regex --match='seafile_config.seafile_dir = seafile_config.validate_seafile_dir(seafile_dir)' \
@@ -51,7 +54,7 @@ run_seafile_cmd bash "/opt/seafile/seafile-server-$seafile_version/setup-seafile
     --server-ip "$domain" \
     --fileserver-port "$port_fileserver" \
     --use-existing-db 1 \
-    --mysql-host localhost \
+    --mysql-host 127.0.0.1 \
     --mysql-port 3306 \
     --mysql-user "$db_user" \
     --mysql-user-passwd "$db_pwd" \
@@ -70,7 +73,6 @@ if [ "$(lsb_release -c -s)" == bullseye ]; then
 fi
 ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
 ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
-ynh_config_add --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
 ynh_config_add --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
 ynh_config_add --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
 ynh_config_add --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
@@ -104,8 +106,9 @@ ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seaf
 
 # Add Seafile Server to startup
 ynh_script_progression "Configuring $app's systemd service..."
-ynh_config_add_systemd --service=seafile --template=seafile.service
+ynh_config_add_systemd --service="$app" --template=seafile.service
 ynh_config_add_systemd --service=seahub --template=seahub.service
+ynh_config_add_systemd --service="$app"-notification --template=seafile-notification.service
 
 # register yunohost service
 yunohost service add seafile --description 'Main service for seafile server.'
