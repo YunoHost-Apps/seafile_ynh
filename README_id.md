@@ -5,7 +5,9 @@ Ini TIDAK boleh diedit dengan tangan.
 
 # Seafile untuk YunoHost
 
-[![Tingkat integrasi](https://dash.yunohost.org/integration/seafile.svg)](https://ci-apps.yunohost.org/ci/apps/seafile/) ![Status kerja](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![Status pemeliharaan](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
+[![Tingkat integrasi](https://apps.yunohost.org/badge/integration/seafile)](https://ci-apps.yunohost.org/ci/apps/seafile/)
+![Status kerja](https://apps.yunohost.org/badge/state/seafile)
+![Status pemeliharaan](https://apps.yunohost.org/badge/maintained/seafile)
 
 [![Pasang Seafile dengan YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
 
@@ -21,7 +23,7 @@ Seafile is an open Source Cloud Storage application.
 It's a Enterprise file sync and share platform with high reliability and performance. It's a file hosting platform with high reliability and performance. Put files on your own server. Sync and share files across different devices, or access all the files as a virtual disk.
 
 
-**Versi terkirim:** 11.0.12~ynh2
+**Versi terkirim:** 11.0.13~ynh1
 
 **Demo:** <https://demo.seafile.com>
 
