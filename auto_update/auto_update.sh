@@ -23,7 +23,7 @@ EOL
 check_app_version() {
     local docker_request_res="$(curl -s 'https://hub.docker.com/v2/repositories/seafileltd/seafile-mc/tags' -H 'Content-Type: application/json' |
         jq -r '.results[]')"
-    local app_remote_version=$(echo "$docker_request_res" | jq -r '.name' | sort -V | grep -E -v 'latest|.*-arm$' | tail -n1)
+    local app_remote_version=$(echo "$docker_request_res" | jq -r '.name' | sort -V | grep -P '^\d+\.\d+\.\d+$'  | tail -n1)
 
     ## Check if new build is needed
     if [[ "$app_version" != "$app_remote_version" ]]
