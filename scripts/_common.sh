@@ -21,7 +21,6 @@ systemd_seafile_bind_mount+="/proc "
 systemd_seafile_bind_mount+="/dev"
 
 systemd_notification_server_bind_mount="$data_dir/notification-data:/opt/notification-data "
-systemd_notification_server_bind_mount+="$app-notification-server:/opt/seafile/logs "
 systemd_notification_server_bind_mount+="/proc "
 systemd_notification_server_bind_mount+="/dev"
 

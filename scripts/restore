@@ -62,9 +62,9 @@ sleep 5
 
 # Restart service
 ynh_script_progression "Starting seafile services..."
-ynh_systemctl --service="$app" --wait_until='spawned seaf-server, pid ' --log_path=/var/log/"$app"/controller.log
+ynh_systemctl --service="$app"
 sleep 2
-ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path="systemd"
-ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=/var/log/"$app"/notification-server.log
+ynh_systemctl --service=seahub
+ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
 
 ynh_script_progression "Restoration completed for $app"
