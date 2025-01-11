@@ -23,7 +23,7 @@ Seafile est une application open source dédiée au stockage de fichiers en nuag
 Cette plateforme d'entreprise permet de synchroniser et partager des fichiers, de façon fiable et performante. Hébergez vos fichiers sur un serveur personnel, partagez-les et syncronisez-les sur tous appareils, ou accédez à vos fichiers par le biais d'un disque virtuel.
 
 
-**Version incluse :** 12.0.7~ynh1
+**Version incluse :** 12.0.6~ynh1
 
 **Démo :** <https://demo.seafile.com>
 
