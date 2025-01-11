@@ -32,9 +32,12 @@ ynh_script_progression "Updating seafile configuration..."
 
 # Update Seafile Config
 ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
-ynh_config_add --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
+ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
 ynh_config_add --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
 ynh_config_add --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
+ynh_config_add --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
+ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
+ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
 
 # Update permissions
 ynh_permission_url --permission=file_server --url="$domain"/seafhttp
@@ -48,9 +51,9 @@ sleep 2
 
 # Reload services
 ynh_script_progression "Starting services..."
-ynh_systemctl --service=seafile --wait_until="spawned seaf-server, pid " --log_path=/var/log/seafile/controller.log
+ynh_systemctl --service="$app" --wait_until='spawned seaf-server, pid ' --log_path=/var/log/"$app"/controller.log
 sleep 2
-ynh_systemctl --service=seahub --wait_until="Seahub is started" --log_path="systemd"
-sleep 2
+ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path="systemd"
+ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=/var/log/"$app"/notification-server.log
 
 ynh_script_progression "Change of URL completed for $app" --time=

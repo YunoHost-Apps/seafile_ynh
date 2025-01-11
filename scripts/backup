@@ -8,7 +8,7 @@
 source ../settings/scripts/experimental_helper.sh
 source ../settings/scripts/_common.sh
 
-if systemctl is-active seafile --quiet || systemctl is-active seahub --quiet; then
+if systemctl is-active "$app" --quiet || systemctl is-active seahub --quiet; then
     ynh_print_warn "It's hightly recommended to make your backup when the service is stopped. Please stop seafile service and seahub service with this command before to run the backup 'systemctl stop seafile.service seahub.service'"
 fi
 
@@ -24,8 +24,9 @@ ynh_backup "$data_dir" --dest_path="data"
 
 ynh_print_info "Backing up configuration..."
 ynh_backup "/etc/nginx/conf.d/$domain.d/${app}.conf"
-ynh_backup /etc/systemd/system/seafile.service
+ynh_backup /etc/systemd/system/"$app".service
 ynh_backup /etc/systemd/system/seahub.service
+ynh_backup /etc/systemd/system/"$app"-notification.service
 ynh_backup /etc/fail2ban/jail.d/"$app".conf
 ynh_backup /etc/fail2ban/filter.d/"$app".conf
 
