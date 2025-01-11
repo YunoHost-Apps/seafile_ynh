@@ -19,8 +19,9 @@ fi
 
 ynh_script_progression "Stoping services..."
 
-ynh_systemctl --service=seafile --action=stop
+ynh_systemctl --service="$app" --action=stop
 ynh_systemctl --service=seahub --action=stop
+ynh_systemctl --service="$app"-notification.service --action=stop
 sleep 5
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
@@ -151,6 +152,8 @@ case "$installed_version" in
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/seahub.sh" python-env python3 "/opt/seafile/seafile-server-$seafile_version/migrate_ldapusers.py"
 ;&
 "11."* )
+    ynh_safe_rm "$install_dir"/conf/ccnet.conf
+
     ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_11.0_12.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_11.0_12.0.sh"
 ;&
@@ -188,8 +191,9 @@ ynh_config_add_nginx 'seahub_port fileserver_port webdav_port'
 
 # Add Seafile Server to startup
 ynh_script_progression "Updating systemd units..."
-ynh_config_add_systemd --service=seafile --template=seafile.service
+ynh_config_add_systemd --service=seafile --template="$app".service
 ynh_config_add_systemd --service=seahub --template=seahub.service
+ynh_config_add_systemd --service=seafile-notification --template="$app"-notification.service
 
 #=================================================
 
@@ -207,19 +211,20 @@ ynh_config_add_fail2ban --logpath="$install_dir"/logs/seahub.log
 
 # register yunohost service
 ynh_script_progression "Register seafile service..."
-yunohost service add seafile --description 'Main service for seafile server.'
+yunohost service add "$app" --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
+yunohost service add "$app"-notification --description 'Seafile client notification server.'
 
 # delete seafile cache
 
 # restart seafile server
 ynh_script_progression "Starting seafile services..."
-sleep 5
 ynh_systemctl --service=memcached.service -p "systemd"
-ynh_systemctl --service=seafile --wait_until="spawned seaf-server, pid " --log_path=/var/log/seafile/controller.log
+sleep 5
+ynh_systemctl --service="$app" --wait_until='spawned seaf-server, pid ' --log_path=/var/log/"$app"/controller.log
 sleep 2
-ynh_systemctl --service=seahub --wait_until="Seahub is started" --log_path="systemd"
-sleep 2
+ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path="systemd"
+ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=/var/log/"$app"/notification-server.log
 
 # remove old version files
 ynh_script_progression "Cleaning system and updating settings..."
