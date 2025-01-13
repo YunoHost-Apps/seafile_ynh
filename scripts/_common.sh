@@ -43,7 +43,7 @@ fi
 #=================================================
 
 run_seafile_cmd() {
-    ynh_hide_warnings systemd-run --wait --uid="$app" --gid="$app" \
+    ynh_hide_warnings systemd-run --wait --pty --uid="$app" --gid="$app" \
         --property=RootDirectory="$install_dir"/seafile_image \
         --property="BindPaths=$systemd_seafile_bind_mount" \
         --property=EnvironmentFile="$install_dir"/seafile_env.conf \
