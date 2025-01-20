@@ -4,6 +4,7 @@ import os
 
 daemon = True
 workers = 5
+enable_stdio_inheritance = True
 
 # default localhost:8000
 bind = "127.0.0.1:__PORT_SEAHUB__"

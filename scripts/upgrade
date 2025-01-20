@@ -191,7 +191,7 @@ ynh_config_add_logrotate /var/log/"$app"
 
 # Add fail2ban
 ynh_script_progression "Configuring fail2ban..."
-ynh_config_add_fail2ban
+ynh_config_add_fail2ban --logpath="$install_dir"/logs/seahub.log
 
 # register yunohost service
 ynh_script_progression "Register seafile service..."
