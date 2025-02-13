@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "12.0.7~ynh1"
+version = "12.0.9~ynh1"
 
 maintainers = ["Josué Tille"]
 
@@ -120,11 +120,11 @@ ram.runtime = "500M"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/seafile-mc:12.0.7"
-    amd64.sha256 = "5cf5049e4786daa49b51bb5aac782027af00616988214220908bc68bd42f48c1"
+    amd64.url = "seafileltd/seafile-mc:12.0.9"
+    amd64.sha256 = "1d85503fb5fd09535e289ca0635684f370bbbac0b7c605cb6f8faf7242fe2d3a"
 
     # For now arm64 seem not available
-    # arm64.url = "seafileltd/seafile-mc:12.0.7"
+    # arm64.url = "seafileltd/seafile-mc:12.0.9"
     # arm64.sha256 = "e9a9fd48ed7d0e6d6e3fbe0e3e055bdb6b2f10901af81c795a5e2acfcd3df360"
 
     [resources.sources.notification_server]
@@ -132,11 +132,11 @@ ram.runtime = "500M"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/notification-server:12.0.7"
-    amd64.sha256 = "e014fb9f37226f0b79f60549fbcbe823e63bb710ff681d24dca78ed8df49fa8d"
+    amd64.url = "seafileltd/notification-server:12.0.9"
+    amd64.sha256 = "99b34774e97594cc8189669904706fd440b4cbab3d3103a945f1423c2355b1fb"
 
     # For now arm64 seem not available
-    # arm64.url = "seafileltd/notification-server:12.0.7"
+    # arm64.url = "seafileltd/notification-server:12.0.9"
     # arm64.sha256 = "e9a9fd48ed7d0e6d6e3fbe0e3e055bdb6b2f10901af81c795a5e2acfcd3df360"
 
     [resources.apt]
