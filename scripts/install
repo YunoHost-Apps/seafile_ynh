@@ -49,6 +49,9 @@ ynh_replace_regex --match='seafile_config.seafile_dir = seafile_config.validate_
 ynh_replace_regex --match="Utils.error('Ccnet config dir \\\"%s\\\" already exists.' % ccnet_config.ccnet_dir)" \
                            --replace='patched = 1' \
                            --file="$seafile_code/setup-seafile-mysql.py"
+ynh_replace_regex --match='db_config.root_conn.close()' \
+                  --replace='patched = 1' \
+                  --file="$seafile_code/setup-seafile-mysql.py"
 run_seafile_cmd bash "/opt/seafile/seafile-server-$seafile_version/setup-seafile-mysql.sh" auto \
     --server-name "$server_name" \
     --server-ip "$domain" \
