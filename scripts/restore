@@ -29,7 +29,7 @@ su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
 
 # Add logrotate
 ynh_script_progression "Configuring log rotation..."
-mkdir -p /var/log/"$app"
+mkdir -p /var/log/{"$app","$app"-notification-server}
 ynh_config_add_logrotate "$install_dir"/logs
 
 # Set all permissions
