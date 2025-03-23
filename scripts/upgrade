@@ -106,6 +106,9 @@ ynh_script_progression "Configuring application..."
 # permission to execute update script and expect helper
 set_permission
 
+ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
+ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
+
 # do the upgrade    ( the ";&" syntax mean when it go in the first case which is true it do all the next case)
 case "$installed_version" in
 "4."* )
@@ -178,8 +181,6 @@ ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile
 ynh_config_add --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
 ynh_config_add --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
 ynh_config_add --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
-ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
-ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
 
 # Fix local warning
 ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seafile_code/seahub.sh"
