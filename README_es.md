@@ -3,7 +3,7 @@ Este archivo README esta generado automaticamente<https://github.com/YunoHost/ap
 No se debe editar a mano.
 -->
 
-# Seafile para Yunohost
+# Seafile para YunoHost
 
 [![Nivel de integración](https://apps.yunohost.org/badge/integration/seafile)](https://ci-apps.yunohost.org/ci/apps/seafile/)
 ![Estado funcional](https://apps.yunohost.org/badge/state/seafile)

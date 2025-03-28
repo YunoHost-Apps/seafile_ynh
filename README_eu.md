@@ -43,7 +43,7 @@ It's a Enterprise file sync and share platform with high reliability and perform
 
 Bidali `pull request`a [`testing` abarrera](https://github.com/YunoHost-Apps/seafile_ynh/tree/testing).
 
-`testing` abarra probatzeko, ondorengoa egin:
+`testing` abarra probatzeko, honakoa egin:
 
 ```bash
 sudo yunohost app install https://github.com/YunoHost-Apps/seafile_ynh/tree/testing --debug
