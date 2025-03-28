@@ -35,6 +35,7 @@ LOGIN_URL = '{{ path2 }}accounts/login/'
 #
 
 ENABLE_LDAP = True
+
 # The URL of LDAP server
 LDAP_SERVER_URL = 'ldap://localhost:389'
 

@@ -19,8 +19,9 @@ fi
 
 ynh_script_progression "Stoping services..."
 
-ynh_systemctl --service=seafile --action=stop
+ynh_systemctl --service="$app" --action=stop
 ynh_systemctl --service=seahub --action=stop
+ynh_systemctl --service="$app"-notification.service --action=stop
 sleep 5
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
@@ -88,6 +89,10 @@ if [ ! -L "$install_dir"/logs ]; then
     ln -s /var/log/"${app}" "$install_dir"/logs
 fi
 
+# Ensure all data dir are created
+mkdir -p /var/log/"$app"
+mkdir -p "$data_dir"/{seafile-data,seahub-data,notification-data}
+
 ynh_script_progression "Upgrading source files..."
 
 # Download new version from sources
@@ -100,6 +105,9 @@ ynh_script_progression "Configuring application..."
 
 # permission to execute update script and expect helper
 set_permission
+
+ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
+ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
 
 # do the upgrade    ( the ";&" syntax mean when it go in the first case which is true it do all the next case)
 case "$installed_version" in
@@ -146,10 +154,19 @@ case "$installed_version" in
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_10.0_11.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/seahub.sh" python-env python3 "/opt/seafile/seafile-server-$seafile_version/migrate_ldapusers.py"
 ;&
+"11."* )
+    ynh_safe_rm "$install_dir"/conf/ccnet.conf
+
+    ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_11.0_12.0.sh"
+    run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_11.0_12.0.sh"
+;&
 esac
 
 ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/minor-upgrade.sh"
 run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/minor-upgrade.sh"
+
+# Clean expired sessions, cf: https://manual.seafile.com/12.0/administration/clean_database/
+run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version//seahub.sh" python-env python3 seahub/manage.py clearsessions
 
 # Clean url in config in DB
 clean_url_in_db_config
@@ -161,7 +178,6 @@ if [ "$(lsb_release -c -s)" == bullseye ]; then
 fi
 ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
 ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
-ynh_config_add --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
 ynh_config_add --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
 ynh_config_add --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
 ynh_config_add --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
@@ -176,8 +192,9 @@ ynh_config_add_nginx 'seahub_port fileserver_port webdav_port'
 
 # Add Seafile Server to startup
 ynh_script_progression "Updating systemd units..."
-ynh_config_add_systemd --service=seafile --template=seafile.service
+ynh_config_add_systemd --service=seafile --template="$app".service
 ynh_config_add_systemd --service=seahub --template=seahub.service
+ynh_config_add_systemd --service=seafile-notification --template="$app"-notification.service
 
 #=================================================
 
@@ -195,19 +212,20 @@ ynh_config_add_fail2ban --logpath="$install_dir"/logs/seahub.log
 
 # register yunohost service
 ynh_script_progression "Register seafile service..."
-yunohost service add seafile --description 'Main service for seafile server.'
+yunohost service add "$app" --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
+yunohost service add "$app"-notification --description 'Seafile client notification server.'
 
 # delete seafile cache
 
 # restart seafile server
 ynh_script_progression "Starting seafile services..."
-sleep 5
 ynh_systemctl --service=memcached.service -p "systemd"
-ynh_systemctl --service=seafile --wait_until="spawned seaf-server, pid " --log_path=/var/log/seafile/controller.log
+sleep 5
+ynh_systemctl --service="$app" --wait_until='Seafile server started' --log_path=systemd
 sleep 2
-ynh_systemctl --service=seahub --wait_until="Seahub is started" --log_path="systemd"
-sleep 2
+ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=systemd
+ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
 
 # remove old version files
 ynh_script_progression "Cleaning system and updating settings..."

@@ -172,6 +172,9 @@ ynh_setup_source_custom() {
     # Apply patches
     if [ -d "$YNH_APP_BASEDIR/patches/" ]; then
         local patches_folder=$(realpath "$YNH_APP_BASEDIR/patches/$source_id")
+        # BEGIN APP CUSTOMIZATION
+        if [ -d "$patches_folder" ]; then
+        # END APP CUSTOMIZATION
         pushd "$dest_dir"
         for patchfile in "$patches_folder/"*.patch; do
             echo "Applying $patchfile"
@@ -184,6 +187,9 @@ ynh_setup_source_custom() {
             fi
         done
         popd
+        # BEGIN APP CUSTOMIZATION
+        fi
+        # END APP CUSTOMIZATION
     fi
 
     # Keep files to be backup/restored at the end of the helper

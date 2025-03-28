@@ -30,7 +30,7 @@ su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
 # Add logrotate
 ynh_script_progression "Configuring log rotation..."
 mkdir -p /var/log/"$app"
-ynh_config_add_logrotate "$install_dir"/logs
+ynh_config_add_logrotate /var/log/"$app"
 
 # Set all permissions
 ynh_script_progression "Protecting directory..."
@@ -39,13 +39,15 @@ set_permission
 # Enable service and start seafile
 ynh_script_progression "Reconfiguring application..."
 systemctl daemon-reload
-systemctl enable seafile --quiet
+systemctl enable "$app" --quiet
 systemctl enable seahub --quiet
+systemctl enable "$app"-notification --quiet
 
 # Add Seafile to YunoHost's monitored services
 ynh_script_progression "Register seafile service..."
-yunohost service add seafile --description 'Main service for seafile server.'
+yunohost service add "$app" --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
+yunohost service add "$app"-notification --description 'Seafile client notification server.'
 
 ynh_script_progression "Reloading services..."
 
@@ -60,9 +62,9 @@ sleep 5
 
 # Restart service
 ynh_script_progression "Starting seafile services..."
-ynh_systemctl --service=seafile --wait_until="spawned seaf-server, pid " --log_path=/var/log/seafile/controller.log
+ynh_systemctl --service="$app" --wait_until='Seafile server started' --log_path=systemd
 sleep 2
-ynh_systemctl --service=seahub --wait_until="Seahub is started" --log_path="systemd"
-sleep 2
+ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=systemd
+ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
 
 ynh_script_progression "Restoration completed for $app"
