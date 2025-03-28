@@ -222,9 +222,9 @@ yunohost service add "$app"-notification --description 'Seafile client notificat
 ynh_script_progression "Starting seafile services..."
 ynh_systemctl --service=memcached.service -p "systemd"
 sleep 5
-ynh_systemctl --service="$app"
+ynh_systemctl --service="$app" --wait_until='Seafile server started' --log_path=systemd
 sleep 2
-ynh_systemctl --service=seahub
+ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=systemd
 ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
 
 # remove old version files
