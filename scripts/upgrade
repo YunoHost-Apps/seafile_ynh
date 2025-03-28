@@ -90,7 +90,7 @@ if [ ! -L "$install_dir"/logs ]; then
 fi
 
 # Ensure all data dir are created
-mkdir -p /var/log/{"$app","$app"-notification-server}
+mkdir -p /var/log/"$app"
 mkdir -p "$data_dir"/{seafile-data,seahub-data,notification-data}
 
 ynh_script_progression "Upgrading source files..."

@@ -22,6 +22,7 @@ ynh_script_progression "Stoping services..."
 # Stop service before any change
 ynh_systemctl --service=seafile --action=stop
 ynh_systemctl --service=seahub --action=stop
+ynh_systemctl --service="$app"-notification.service --action=stop
 sleep 2
 pkill -f seafile-controller || true
 pkill -f seaf-server || true

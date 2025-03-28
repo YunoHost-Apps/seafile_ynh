@@ -74,8 +74,8 @@ set_permission() {
     chmod -R u+rwX,g+rX-w,o= "$install_dir"/{conf,ccnet}
     chown -R "$app:$app" "$install_dir"/seafile_image/opt/seafile
     chmod -R u+rwX,g-w,o= "$install_dir"/seafile_image/opt/seafile
-    chown -R "$app:$app" /var/log/{"$app","$app"-notification-server}
-    chmod -R u=rwX,g=rX,o= /var/log/{"$app","$app"-notification-server}
+    chown -R "$app:$app" /var/log/"$app"
+    chmod -R u=rwX,g=rX,o= /var/log/"$app"
 
     # Allow to www-data to each dir between /opt/yunohost/seafile and /opt/yunohost/seafile/seafile_image/opt/seafile/seahub/media
     local dir_path=''
