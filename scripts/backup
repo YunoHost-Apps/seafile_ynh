@@ -36,7 +36,7 @@ ynh_backup "/var/log/$app"
 # Backup mysql
 ynh_print_info "Backing up database"
 ynh_mysql_dump_db > "${YNH_CWD}"/seafiledb.dmp
-ynh_mysql_dump_db ccnetdb > "${YNH_CWD}"/ccnetdb.dmp
-ynh_mysql_dump_db seahubdb > "${YNH_CWD}"/seahubdb.dmp
+ynh_mysql_dump_db "$db_name_ccnet" > "${YNH_CWD}"/ccnetdb.dmp
+ynh_mysql_dump_db "$db_name_seahub" > "${YNH_CWD}"/seahubdb.dmp
 
 ynh_print_info "Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."

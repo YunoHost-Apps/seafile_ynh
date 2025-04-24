@@ -141,4 +141,6 @@ ram.runtime = "500M"
     packages = ["mariadb-server", "memcached"]
 
     [resources.database]
-    type = "mysql"
+    main.type = "mysql"
+    ccnet.type = "mysql"
+    seahub.type = "mysql"

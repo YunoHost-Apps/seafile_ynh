@@ -28,6 +28,9 @@ pkill -f seaf-server || true
 pkill -f ccnet-server || true
 pkill -f seahub || true
 
+# Set missing settings
+ynh_app_setting_set_default --key=seahub_secret_key --value="$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)"
+
 # Migrate DB name if needed
 if mysqlshow | grep -q seafiledb; then
     mysqlconn="mysql -u root"
@@ -37,12 +40,35 @@ if mysqlshow | grep -q seafiledb; then
         $mysqlconn -e "RENAME TABLE seafiledb.$name to $db_name.$name";
     done;
     $mysqlconn -e "DROP DATABASE seafiledb"
-    ynh_replace --match='db_name = seafiledb' --replace='db_name = seafile' --file="$install_dir"/conf/seafile.conf
-    sed -i "s|password\s*=\s*.*^|password = $db_pwd|g" "$install_dir"/conf/seafile.conf
+    ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
+    ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
+    ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
 fi
-
-# Set missing settings
-ynh_app_setting_set_default --key=seahub_secret_key --value="$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)"
+if mysqlshow | grep -q ccnetdb; then
+    mysqlconn="mysql -u root"
+    sql_mv_params=$($mysqlconn -N -e "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES \
+                            WHERE table_schema='ccnetdb'")
+    for name in $sql_mv_params; do
+        $mysqlconn -e "RENAME TABLE ccnetdb.$name to $db_name_ccnet.$name";
+    done;
+    $mysqlconn -e "DROP DATABASE ccnetdb"
+    ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
+    ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
+    ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
+fi
+if mysqlshow | grep -q seahubdb; then
+    mysqlconn="mysql -u root"
+    sql_mv_params=$($mysqlconn -N -e "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES \
+                            WHERE table_schema='seahubdb'")
+    for name in $sql_mv_params; do
+        $mysqlconn -e "RENAME TABLE seahubdb.$name to $db_name_seahub.$name";
+    done;
+    $mysqlconn -e "DROP DATABASE seahubdb"
+    ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
+    ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
+    ynh_config_add --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
+    ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
+fi
 
 #
 # Update data dir if needed

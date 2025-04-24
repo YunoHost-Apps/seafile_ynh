@@ -30,12 +30,6 @@ mkdir -p "$install_dir"/{conf,ccnet}
 ynh_script_progression "Installing sources files..."
 install_source
 
-# init databases
-ynh_script_progression "Configuring MySQL database..."
-db_user=seafile
-ynh_''mysql_create_db ccnetdb "$db_user" "$db_pwd"
-ynh_''mysql_create_db seahubdb "$db_user" "$db_pwd"
-
 ynh_script_progression "Configuring application..."
 
 ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
@@ -62,8 +56,8 @@ run_seafile_cmd bash "/opt/seafile/seafile-server-$seafile_version/setup-seafile
     --mysql-user "$db_user" \
     --mysql-user-passwd "$db_pwd" \
     -s "$db_name" \
-    -c ccnetdb \
-    -b seahubdb
+    -c "$db_name_ccnet" \
+    -b "$db_name_seahub"
 
 # Retrive values from auto generated config file
 seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)

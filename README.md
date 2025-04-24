@@ -4,7 +4,7 @@ It shall NOT be edited by hand.
 -->
 
 <h1>
-  <img src="https://raw.githubusercontent.com/YunoHost/apps/master/logos/seafile.png" width="32px" alt="Logo of Seafile">
+  <img src="https://raw.githubusercontent.com/YunoHost/apps/main/logos/seafile.png" width="32px" alt="Logo of Seafile">
   Seafile, packaged for YunoHost
 </h1>
 
@@ -12,7 +12,7 @@ Open Source Cloud Storage
 
 [![🌐 Official app website](https://img.shields.io/badge/Official_app_website-darkgreen?style=for-the-badge)](https://www.seafile.com)
 [![App Demo](https://img.shields.io/badge/App_Demo-blue?style=for-the-badge)](https://demo.seafile.com)
-![Version: 12.0.11~ynh2](https://img.shields.io/badge/Version-12.0.11~ynh2-rgba(0,150,0,1)?style=for-the-badge)
+[![Version: 12.0.11~ynh2](https://img.shields.io/badge/Version-12.0.11~ynh2-rgba(0,150,0,1)?style=for-the-badge)](https://ci-apps.yunohost.org/ci/apps/seafile/)
 
 <div align="center">
 <a href="https://apps.yunohost.org/app/seafile"><img height="100px" src="https://github.com/YunoHost/yunohost-artwork/raw/refs/heads/main/badges/neopossum-badges/badge_more_info_on_the_appstore.svg"/></a>

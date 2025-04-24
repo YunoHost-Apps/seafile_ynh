@@ -102,9 +102,9 @@ set_permission() {
 
 clean_url_in_db_config() {
     sql_request='DELETE FROM `constance_config` WHERE `constance_key`= "SERVICE_URL"'
-    ynh_mysql_db_shell <<< "$sql_request" --database=seahubdb
+    ynh_mysql_db_shell <<< "$sql_request" --database="$db_name_seahub"
     sql_request='DELETE FROM `constance_config` WHERE `constance_key`= "FILE_SERVER_ROOT"'
-    ynh_mysql_db_shell <<< "$sql_request" --database=seahubdb
+    ynh_mysql_db_shell <<< "$sql_request" --database="$db_name_seahub"
 }
 
 ensure_vars_set() {

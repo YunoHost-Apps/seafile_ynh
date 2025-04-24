@@ -19,11 +19,9 @@ ynh_script_progression "Restoring files..."
 ynh_restore_everything
 # Restore mysql dump
 ynh_script_progression "Restoring database..."
-ynh_''mysql_create_db ccnetdb "$db_user" "$db_pwd"
-ynh_''mysql_create_db seahubdb "$db_user" "$db_pwd"
 su -c "mysql -u ${app} -p$db_pwd $db_name < ${YNH_CWD}/seafiledb.dmp"
-su -c "mysql -u ${app} -p$db_pwd ccnetdb < ${YNH_CWD}/ccnetdb.dmp"
-su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
+su -c "mysql -u ${app} -p$db_pwd $db_name_ccnet < ${YNH_CWD}/ccnetdb.dmp"
+su -c "mysql -u ${app} -p$db_pwd $db_name_seahub < ${YNH_CWD}/seahubdb.dmp"
 
 #=================================================
 

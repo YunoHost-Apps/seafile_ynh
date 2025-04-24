@@ -29,11 +29,6 @@ ynh_script_progression "Removing code..."
 ynh_safe_rm /var/www/"$app"
 ynh_safe_rm /opt/yunohost/"$app"
 
-# Remove databases
-ynh_script_progression "Removing databases..."
-ynh_''mysql_drop_db ccnetdb
-ynh_''mysql_drop_db seahubdb
-
 # Remove systemd service
 ynh_script_progression "Removing systemd units..."
 ynh_config_remove_systemd seafile
