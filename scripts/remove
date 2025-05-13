@@ -25,10 +25,6 @@ pkill -f seaf-server || true
 pkill -f ccnet-server || true
 pkill -f seahub || true
 
-ynh_script_progression "Removing code..."
-ynh_safe_rm /var/www/"$app"
-ynh_safe_rm /opt/yunohost/"$app"
-
 # Remove databases
 ynh_script_progression "Removing databases..."
 ynh_''mysql_drop_db ccnetdb
