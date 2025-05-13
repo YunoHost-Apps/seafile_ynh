@@ -119,7 +119,7 @@ REMOTE_USER_IMPORT_FROM_LDAP = True
 
 # For security consideration, please set to match the host/domain of your site, e.g., ALLOWED_HOSTS = ['.example.com'].
 # Please refer https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts for details.
-ALLOWED_HOSTS = ['{{ domain }}']
+ALLOWED_HOSTS = ['{{ domain }}', '127.0.0.1']
 
 # Whether to use a secure cookie for the CSRF cookie
 # https://docs.djangoproject.com/en/3.2/ref/settings/#csrf-cookie-secure
