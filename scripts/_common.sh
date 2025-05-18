@@ -10,7 +10,7 @@ readonly seafile_image="$install_dir/seafile_image"
 readonly notification_image="$install_dir/notification_image"
 readonly seafile_code="$seafile_image/opt/seafile/seafile-server-$seafile_version"
 
-readonly time_zone="$(cat /etc/timezone)"
+readonly time_zone="$(timedatectl show --value --property=Timezone)"
 readonly python_version="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2)"
 systemd_seafile_bind_mount="$data_dir/seafile-data:/opt/seafile/seafile-data "
 systemd_seafile_bind_mount+="$data_dir/seahub-data:/opt/seafile/seahub-data "
