@@ -5,7 +5,6 @@
 #=================================================
 
 # Import common cmd
-source ./experimental_helper.sh
 source ./_common.sh
 
 #=================================================
@@ -32,8 +31,9 @@ ynh_''mysql_drop_db seahubdb
 
 # Remove systemd service
 ynh_script_progression "Removing systemd units..."
-ynh_config_remove_systemd seafile
+ynh_config_remove_systemd "$app"
 ynh_config_remove_systemd seahub
+ynh_config_remove_systemd "$app"-notification
 
 # Remove nginx config
 ynh_script_progression "Removing nginx configuration..."
@@ -47,8 +47,9 @@ ynh_script_progression "Removing fail2ban configuration..."
 ynh_config_remove_fail2ban
 
 ynh_script_progression "Removing seafile service..."
-yunohost service remove seafile
+yunohost service remove "$app"
 yunohost service remove seahub
+yunohost service remove "$app"-notification
 
 ynh_script_progression "Removal of $app completed"
 
