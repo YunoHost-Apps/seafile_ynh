@@ -32,7 +32,7 @@ else
     readonly path2="$path/"
 fi
 
-if [ "${LANG:0:2}" == C. ]; then
+if [ "${LANG:0:2}" == C. ] || [ "${LANG}" == C ]; then
     readonly language=en
 else
     readonly language="${LANG:0:2}"
