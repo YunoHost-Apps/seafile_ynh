@@ -8,6 +8,7 @@ readonly seafile_version=$(ynh_app_upstream_version)
 
 readonly seafile_image="$install_dir/seafile_image"
 readonly notification_image="$install_dir/notification_image"
+readonly seadoc_image="$install_dir/seadoc_image"
 readonly seafile_code="$seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 readonly time_zone="$(timedatectl show --value --property=Timezone)"
@@ -22,6 +23,10 @@ systemd_seafile_bind_mount+="$install_dir/ccnet:/opt/seafile/ccnet"
 
 systemd_notification_server_bind_mount="$systemd_base_bind_mount"
 systemd_notification_server_bind_mount+="$data_dir/notification-data:/opt/notification-data"
+
+systemd_seadoc_bind_mount="$systemd_base_bind_mount"
+systemd_seadoc_bind_mount+="$install_dir/seadoc-conf:/opt/sdoc-server/conf "
+systemd_seadoc_bind_mount+="/var/log/$app:/opt/sdoc-server/logs"
 
 # Create special path with / at the end
 if [[ "$path" == '/' ]]
@@ -54,16 +59,23 @@ install_source() {
     ynh_replace --match="__SEAFILE_VERSION__" --replace="$seafile_version" --file="$YNH_APP_BASEDIR"/patches/main/import_ldap_user_when_authenticated_from_remoteUserBackend.patch
     ynh_setup_source_custom --dest_dir="$seafile_image" --full_replace
     mkdir -p "$install_dir"/seafile_image/opt/seafile/{seafile-data,seahub-data,conf,ccnet,logs}
-    grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$install_dir"/seafile_image/etc/passwd
-    grep "^$app:x"  /etc/group >> "$install_dir"/seafile_image/etc/group
-    grep "^$app:x"  /etc/group- >> "$install_dir"/seafile_image/etc/group-
-    grep "^$app:"  /etc/shadow >> "$install_dir"/seafile_image/etc/shadow
+    grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$seafile_image/etc/passwd"
+    grep "^$app:x"  /etc/group >> "$seafile_image/etc/group"
+    grep "^$app:x"  /etc/group- >> "$seafile_image/etc/group-"
+    grep "^$app:"  /etc/shadow >> "$seafile_image/etc/shadow"
 
     ynh_setup_source_custom --dest_dir="$notification_image" --full_replace --source_id=notification_server
-    grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$install_dir"/seafile_image/etc/passwd
-    grep "^$app:x"  /etc/group >> "$install_dir"/seafile_image/etc/group
-    grep "^$app:x"  /etc/group- >> "$install_dir"/seafile_image/etc/group-
-    grep "^$app:"  /etc/shadow >> "$install_dir"/seafile_image/etc/shadow
+    grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$notification_image/etc/passwd"
+    grep "^$app:x"  /etc/group >> "$notification_image/etc/group"
+    grep "^$app:x"  /etc/group- >> "$notification_image/etc/group-"
+    grep "^$app:"  /etc/shadow >> "$notification_image/etc/shadow"
+
+    ynh_setup_source_custom --dest_dir="$seadoc_image" --full_replace --source_id=seadoc
+    grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$seadoc_image/etc/passwd"
+    grep "^$app:x"  /etc/group >> "$seadoc_image/etc/group"
+    grep "^$app:x"  /etc/group- >> "$seadoc_image/etc/group-"
+    grep "^$app:"  /etc/shadow >> "$seadoc_image/etc/shadow"
+    mkdir -p "$seadoc_image/opt/sdoc-server/"{logs,conf}
 }
 
 set_permission() {
@@ -71,8 +83,10 @@ set_permission() {
     chmod u=rwx,g=rx,o= "$install_dir"
     chown -R "$app:$app" "$install_dir"/{conf,ccnet}
     chmod -R u+rwX,g+rX-w,o= "$install_dir"/{conf,ccnet}
-    chown -R "$app:$app" "$install_dir"/seafile_image/opt/seafile
-    chmod -R u+rwX,g-w,o= "$install_dir"/seafile_image/opt/seafile
+    chown -R "$app:$app" "$seafile_image/opt/seafile"
+    chmod -R u+rwX,g-w,o= "$seafile_image/opt/seafile"
+    chown -R "$app:$app" "$seadoc_image/opt/sdoc-server"
+    chmod -R u+rwX,g-w,o= "$seadoc_image/opt/sdoc-server"
     chown -R "$app:$app" /var/log/"$app"
     chmod -R u=rwX,g=rX,o= /var/log/"$app"
 

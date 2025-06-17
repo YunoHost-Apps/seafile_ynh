@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "12.0.14~ynh1"
+version = "12.0.14~ynh2"
 
 maintainers = ["Josué Tille"]
 
@@ -24,7 +24,7 @@ architectures = ["amd64", "arm64"]
 multi_instance = false
 ldap = true
 sso = true
-disk = "1.5G"
+disk = "4G"
 ram.build = "0M"
 ram.runtime = "500M"
 
@@ -73,6 +73,7 @@ ram.runtime = "500M"
 
     [resources.permissions]
     main.url = "/"
+    main.additional_urls = ["__DOMAIN__/socket.io"]
 
     file_server.url = "__DOMAIN__/seafhttp"
     file_server.label = "File server"
@@ -87,6 +88,13 @@ ram.runtime = "500M"
     notification_server.auth_header = false
     notification_server.show_tile = false
     notification_server.protected = true
+
+    seadoc.url = "/sdoc"
+    seadoc.label = "Seadoc"
+    seadoc.allowed = "visitors"
+    seadoc.auth_header = false
+    seadoc.show_tile = false
+    seadoc.protected = true
 
     webdav.url = "__DOMAIN__/seafdav"
     webdav.label = "Webdav"
@@ -114,6 +122,7 @@ ram.runtime = "500M"
     fileserver.default = 8082
     notificationserver.default = 8083
     webdav.default = 8080
+    seadoc.default = 8084
 
     [resources.sources.main]
     format = "docker"
@@ -136,6 +145,17 @@ ram.runtime = "500M"
 
     arm64.url = "seafileltd/notification-server:12.0.11"
     arm64.sha256 = "89c875c05b9ce52f0fd129d1adf6601650e8dc7d5881a5d37c1b383b47f3e555"
+
+    [resources.sources.seadoc]
+    format = "docker"
+    extract = true
+    prefetch = false
+
+    amd64.url = "seafileltd/sdoc-server:1.0.5"
+    amd64.sha256 = "b5d3aff910be22388d329053c7dc2847a6760a6c7cfd7f0b1ef0e4f445b158b3"
+
+    arm64.url = "seafileltd/sdoc-server:1.0.5"
+    arm64.sha256 = "b5d3aff910be22388d329053c7dc2847a6760a6c7cfd7f0b1ef0e4f445b158b3"
 
     [resources.apt]
     packages = ["mariadb-server", "memcached"]

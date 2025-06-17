@@ -21,6 +21,8 @@ ynh_script_progression "Stoping services..."
 ynh_systemctl --service="$app" --action=stop
 ynh_systemctl --service=seahub --action=stop
 ynh_systemctl --service="$app"-notification.service --action=stop
+ynh_systemctl --service="$app"-doc-server.service --action=stop
+ynh_systemctl --service="$app"-doc-converter.service --action=stop
 sleep 5
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
@@ -91,6 +93,7 @@ fi
 # Ensure all data dir are created
 mkdir -p /var/log/"$app"
 mkdir -p "$data_dir"/{seafile-data,seahub-data,notification-data}
+mkdir -p "$install_dir"/{conf,ccnet,seadoc-conf}
 
 ynh_script_progression "Upgrading source files..."
 
@@ -107,6 +110,7 @@ set_permission
 
 ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
 ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
+ynh_config_add --jinja --template=seadoc_env.j2 --destination="$install_dir/seadoc_env.conf"
 
 # do the upgrade    ( the ";&" syntax mean when it go in the first case which is true it do all the next case)
 case "$installed_version" in
@@ -191,9 +195,11 @@ ynh_config_add_nginx 'seahub_port fileserver_port webdav_port'
 
 # Add Seafile Server to startup
 ynh_script_progression "Updating systemd units..."
-ynh_config_add_systemd --service=seafile --template="$app".service
+ynh_config_add_systemd --service="$app" --template=seafile.service
 ynh_config_add_systemd --service=seahub --template=seahub.service
-ynh_config_add_systemd --service=seafile-notification --template="$app"-notification.service
+ynh_config_add_systemd --service="$app-notification" --template=seafile-notification.service
+ynh_config_add_systemd --service="$app-doc-server" --template=seafile-doc-server.service
+ynh_config_add_systemd --service="$app-doc-converter" --template=seafile-doc-converter.service
 
 #=================================================
 
@@ -214,6 +220,8 @@ ynh_script_progression "Register seafile service..."
 yunohost service add "$app" --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
 yunohost service add "$app"-notification --description 'Seafile client notification server.'
+yunohost service add "$app-doc-server" --description='Seafile online collaborative document editor server.'
+yunohost service add "$app-doc-converter" --description='Seafile online collaborative document editor converter.'
 
 # delete seafile cache
 
@@ -225,6 +233,8 @@ ynh_systemctl --service="$app" --wait_until='Seafile server started' --log_path=
 sleep 2
 ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=systemd
 ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
+ynh_systemctl --service="$app"-doc-server.service --wait_until="server is serve on http://127.0.0.1" --log_path=systemd
+ynh_systemctl --service="$app"-doc-converter.service --log_path=systemd
 
 # remove old version files
 ynh_script_progression "Cleaning system and updating settings..."
