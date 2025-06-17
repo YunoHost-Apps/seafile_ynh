@@ -12,17 +12,16 @@ readonly seafile_code="$seafile_image/opt/seafile/seafile-server-$seafile_versio
 
 readonly time_zone="$(timedatectl show --value --property=Timezone)"
 readonly python_version="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2)"
-systemd_seafile_bind_mount="$data_dir/seafile-data:/opt/seafile/seafile-data "
+readonly systemd_base_bind_mount="/proc /dev /usr/share/zoneinfo "
+systemd_seafile_bind_mount="$systemd_base_bind_mount"
+systemd_seafile_bind_mount+="$data_dir/seafile-data:/opt/seafile/seafile-data "
 systemd_seafile_bind_mount+="$data_dir/seahub-data:/opt/seafile/seahub-data "
 systemd_seafile_bind_mount+="/var/log/$app:/opt/seafile/logs "
 systemd_seafile_bind_mount+="$install_dir/conf:/opt/seafile/conf "
-systemd_seafile_bind_mount+="$install_dir/ccnet:/opt/seafile/ccnet "
-systemd_seafile_bind_mount+="/proc "
-systemd_seafile_bind_mount+="/dev"
+systemd_seafile_bind_mount+="$install_dir/ccnet:/opt/seafile/ccnet"
 
-systemd_notification_server_bind_mount="$data_dir/notification-data:/opt/notification-data "
-systemd_notification_server_bind_mount+="/proc "
-systemd_notification_server_bind_mount+="/dev"
+systemd_notification_server_bind_mount="$systemd_base_bind_mount"
+systemd_notification_server_bind_mount+="$data_dir/notification-data:/opt/notification-data"
 
 # Create special path with / at the end
 if [[ "$path" == '/' ]]
