@@ -22,6 +22,8 @@ ynh_script_progression "Stoping services..."
 ynh_systemctl --service=seafile --action=stop
 ynh_systemctl --service=seahub --action=stop
 ynh_systemctl --service="$app"-notification.service --action=stop
+ynh_systemctl --service="$app"-doc-server.service --action=stop
+ynh_systemctl --service="$app"-doc-converter.service --action=stop
 sleep 2
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
@@ -55,5 +57,7 @@ ynh_systemctl --service="$app" --wait_until='Seafile server started' --log_path=
 sleep 2
 ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=systemd
 ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
+ynh_systemctl --service="$app"-doc-server.service --wait_until="server is serve on http://127.0.0.1" --log_path=systemd
+ynh_systemctl --service="$app"-doc-converter.service --log_path=systemd
 
 ynh_script_progression "Change of URL completed for $app" --time=

@@ -26,6 +26,8 @@ ynh_backup "/etc/nginx/conf.d/$domain.d/${app}.conf"
 ynh_backup /etc/systemd/system/"$app".service
 ynh_backup /etc/systemd/system/seahub.service
 ynh_backup /etc/systemd/system/"$app"-notification.service
+ynh_backup "/etc/systemd/system/$app-doc-server.service"
+ynh_backup "/etc/systemd/system/$app-doc-converter.service"
 ynh_backup /etc/fail2ban/jail.d/"$app".conf
 ynh_backup /etc/fail2ban/filter.d/"$app".conf
 
