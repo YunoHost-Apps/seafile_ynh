@@ -41,12 +41,16 @@ systemctl daemon-reload
 systemctl enable "$app" --quiet
 systemctl enable seahub --quiet
 systemctl enable "$app"-notification --quiet
+systemctl enable "$app-doc-server" --quiet
+systemctl enable "$app-doc-converter" --quiet
 
 # Add Seafile to YunoHost's monitored services
 ynh_script_progression "Register seafile service..."
 yunohost service add "$app" --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
 yunohost service add "$app"-notification --description 'Seafile client notification server.'
+yunohost service add "$app-doc-server" --description='Seafile online collaborative document editor server.'
+yunohost service add "$app-doc-converter" --description='Seafile online collaborative document editor converter.'
 
 ynh_script_progression "Reloading services..."
 
@@ -65,5 +69,7 @@ ynh_systemctl --service="$app" --wait_until='Seafile server started' --log_path=
 sleep 2
 ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=systemd
 ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
+ynh_systemctl --service="$app"-doc-server.service --wait_until="server is serve on http://127.0.0.1" --log_path=systemd
+ynh_systemctl --service="$app"-doc-converter.service --log_path=systemd
 
 ynh_script_progression "Restoration completed for $app"

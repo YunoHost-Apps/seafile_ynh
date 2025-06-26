@@ -1,18 +1,19 @@
 [Unit]
-Description=Seafile notification server
+Description=Seadoc server
 After=network.target
 After=mysql.service
 
 [Service]
 Type=simple
-ExecStart=/opt/seafile/notification-server -c /opt/notification-data
+WorkingDirectory=/opt/sdoc-server/sdoc-server-latest/sdoc-server
+ExecStart=/usr/bin/nodejs --max-old-space-size=4096 ./dist/_bin/www.js
 User=__APP__
 Group=__APP__
 
 # Config releated to run in docker provied file system
-RootDirectory=__NOTIFICATION_IMAGE__
-BindPaths=__SYSTEMD_NOTIFICATION_SERVER_BIND_MOUNT__
-EnvironmentFile=__INSTALL_DIR__/notification_server_env.conf
+RootDirectory=__SEADOC_IMAGE__
+BindPaths=__SYSTEMD_SEADOC_BIND_MOUNT__
+EnvironmentFile=__INSTALL_DIR__/seadoc_env.conf
 
 # Sandboxing options to harden security
 # Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
