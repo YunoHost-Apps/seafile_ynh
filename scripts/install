@@ -87,23 +87,6 @@ cp ../conf/create_admin.json "$install_dir"/conf/admin.txt
 ynh_replace         --match=__ADMIN__ --replace="$admin_email" --file="$install_dir"/conf/admin.txt
 ynh_replace_regex --match=__PASSWORD__ --replace="$admin_password" --file="$install_dir"/conf/admin.txt
 
-# Use symlink to store data
-if [ -e "$install_dir"/seafile-data ]; then
-    mv -t "$data_dir"/seafile-data "$install_dir"/seafile-data/*
-    ynh_safe_rm "$install_dir"/seafile-data
-fi
-if [ -e "$install_dir"/seahub-data ]; then
-    mv -t "$data_dir"/seahub-data "$install_dir"/seahub-data/*
-    ynh_safe_rm "$install_dir"/seahub-data
-fi
-if [ -e "$install_dir"/logs ]; then
-    mv -t /var/log/"$app" "$install_dir"/logs/*
-    ynh_safe_rm "$install_dir"/logs
-fi
-ln -s "$data_dir"/seafile-data "$install_dir"/seafile-data
-ln -s "$data_dir"/seahub-data "$install_dir"/seahub-data
-ln -s /var/log/"$app" "$install_dir"/logs
-
 # Fix local warning
 ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seafile_code/seahub.sh"
 

@@ -1,7 +1,6 @@
 [Unit]
 Description=Seadoc server
-After=network.target
-After=mysql.service
+After=network.target mysql.service seafile.service
 
 [Service]
 Type=simple

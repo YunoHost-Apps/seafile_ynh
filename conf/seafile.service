@@ -9,6 +9,8 @@ ExecStart=/opt/seafile/seafile-server-__SEAFILE_VERSION__/seafile.sh start
 ExecStop=/opt/seafile/seafile-server-__SEAFILE_VERSION__/seafile.sh stop
 User=__APP__
 Group=__APP__
+RuntimeDirectory=__APP__/pids
+RuntimeDirectoryPreserve=yes
 
 # Config releated to run in docker provied file system
 RootDirectory=__INSTALL_DIR__/seafile_image
