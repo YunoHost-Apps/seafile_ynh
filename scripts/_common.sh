@@ -48,7 +48,8 @@ fi
 #=================================================
 
 run_seafile_cmd() {
-    ynh_hide_warnings systemd-run --wait --pty --uid="$app" --gid="$app" \
+    mkdir -p "/run/$app/pids"
+    ynh_hide_warnings systemd-run --wait --pipe --uid="$app" --gid="$app" \
         --property=RootDirectory="$install_dir"/seafile_image \
         --property="BindPaths=$systemd_seafile_bind_mount" \
         --property=EnvironmentFile="$install_dir"/seafile_env.conf \
@@ -59,7 +60,7 @@ install_source() {
     # set correct seafile version in patch
     ynh_replace --match="__SEAFILE_VERSION__" --replace="$seafile_version" --file="$YNH_APP_BASEDIR"/patches/main/import_ldap_user_when_authenticated_from_remoteUserBackend.patch
     ynh_setup_source_custom --dest_dir="$seafile_image" --full_replace
-    mkdir -p "$install_dir"/seafile_image/opt/seafile/{seafile-data,seahub-data,conf,ccnet,logs}
+    mkdir -p "$install_dir"/seafile_image/opt/seafile/{seafile-data,seahub-data,conf,ccnet,logs,pids}
     grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$seafile_image/etc/passwd"
     grep "^$app:x"  /etc/group >> "$seafile_image/etc/group"
     grep "^$app:x"  /etc/group- >> "$seafile_image/etc/group-"
@@ -102,9 +103,8 @@ set_permission() {
     test -e "$install_dir/seafile_image/opt/seafile/seahub-data" && setfacl -m user:www-data:rX "$install_dir/seafile_image/opt/seafile/seahub-data"
     test -e "$seafile_code/seahub/media" && setfacl -R -m user:www-data:rX "$seafile_code/seahub/media"
 
-    # At install time theses directory are not available
-    test -e "$install_dir"/seahub-data && setfacl -m user:www-data:rX "$data_dir"
-    test -e "$install_dir"/seahub-data && setfacl -R -m user:www-data:rX "$data_dir"/seahub-data
+    setfacl -m user:www-data:rX "$data_dir"
+    setfacl -R -m user:www-data:rX "$data_dir"/seahub-data
 
     chmod u=rwx,g=rx,o= "$data_dir"
     find "$data_dir" \(   \! -perm -o= \

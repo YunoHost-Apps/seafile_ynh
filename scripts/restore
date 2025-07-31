@@ -24,6 +24,10 @@ su -c "mysql -u ${app} -p$db_pwd $db_name < ${YNH_CWD}/seafiledb.dmp"
 su -c "mysql -u ${app} -p$db_pwd ccnetdb < ${YNH_CWD}/ccnetdb.dmp"
 su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
 
+redis_db=$(ynh_redis_get_free_db)
+ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
+ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
+
 #=================================================
 
 # Add logrotate

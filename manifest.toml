@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "12.0.14~ynh2"
+version = "13.0.8~ynh1"
 
 maintainers = ["Josué Tille"]
 
@@ -129,36 +129,36 @@ ram.runtime = "500M"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/seafile-mc:12.0.14"
-    amd64.sha256 = "7bbe7043facbc639a8e6144f32d50dc4d771191ecaa68002efb2b0237fb90358"
+    amd64.url = "seafileltd/seafile-mc:13.0.8"
+    amd64.sha256 = "751bc857cf3c1a9f1bfce46d7e1d5eebeeb9d955670afaae49c1ebeaaebc59c5"
 
-    arm64.url = "seafileltd/seafile-mc:12.0.14"
-    arm64.sha256 = "799fd6b4b30135bba6e4b95ec46108fe4225818fc2b17d742d6077c075dbb5ec"
+    arm64.url = "seafileltd/seafile-mc:13.0.8"
+    arm64.sha256 = "8898bd4cc2ff6503bee59ac6067269a94e347c38a8a15639290e8e0e64878702"
 
     [resources.sources.notification_server]
     format = "docker"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/notification-server:12.0.11"
-    amd64.sha256 = "aaadbf8ab409057ffdb401d0940822d6ca2909db361610a678684fcd710555f4"
+    amd64.url = "seafileltd/notification-server:13.0.7"
+    amd64.sha256 = "74c31eb6ab133e4b2f64dd84c908617fe1f1af427b2d25958847b6fae7325862"
 
-    arm64.url = "seafileltd/notification-server:12.0.11"
-    arm64.sha256 = "89c875c05b9ce52f0fd129d1adf6601650e8dc7d5881a5d37c1b383b47f3e555"
+    arm64.url = "seafileltd/notification-server:13.0.7"
+    arm64.sha256 = ""
 
     [resources.sources.seadoc]
     format = "docker"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/sdoc-server:1.0.5"
-    amd64.sha256 = "b5d3aff910be22388d329053c7dc2847a6760a6c7cfd7f0b1ef0e4f445b158b3"
+    amd64.url = "seafileltd/sdoc-server:2.0.5"
+    amd64.sha256 = "76fda47809309634cd64f62c748bafb2aa35099414a245223254fe5a34fbb0c0"
 
-    arm64.url = "seafileltd/sdoc-server:1.0.5"
-    arm64.sha256 = "b5d3aff910be22388d329053c7dc2847a6760a6c7cfd7f0b1ef0e4f445b158b3"
+    arm64.url = "seafileltd/sdoc-server:2.0.5"
+    arm64.sha256 = "76fda47809309634cd64f62c748bafb2aa35099414a245223254fe5a34fbb0c0"
 
     [resources.apt]
-    packages = ["mariadb-server", "memcached"]
+    packages = ["mariadb-server", "redis-server"]
 
     [resources.database]
     type = "mysql"

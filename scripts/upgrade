@@ -80,6 +80,11 @@ if [ -e "$install_dir"/logs ] && [ ! -L "$install_dir"/logs ]; then
     mv "$install_dir"/logs  /var/log/"${app}"
 fi
 
+if [ -z "${redis_db:-}" ]; then
+    redis_db=$(ynh_redis_get_free_db)
+    ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
+fi
+
 # Ensure all data dir are created
 mkdir -p /var/log/"$app"
 mkdir -p "$data_dir"/{seafile-data,seahub-data,notification-data}

@@ -35,6 +35,11 @@ db_user=seafile
 ynh_''mysql_create_db ccnetdb "$db_user" "$db_pwd"
 ynh_''mysql_create_db seahubdb "$db_user" "$db_pwd"
 
+ynh_script_progression "Configuring redis database..."
+
+redis_db=$(ynh_redis_get_free_db)
+ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
+
 ynh_script_progression "Configuring application..."
 
 ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf

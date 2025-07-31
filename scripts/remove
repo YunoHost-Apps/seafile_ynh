@@ -31,6 +31,8 @@ ynh_script_progression "Removing databases..."
 ynh_''mysql_drop_db ccnetdb
 ynh_''mysql_drop_db seahubdb
 
+ynh_redis_remove_db "$redis_db"
+
 # Remove systemd service
 ynh_script_progression "Removing systemd units..."
 ynh_config_remove_systemd "$app"

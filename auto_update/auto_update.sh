@@ -93,7 +93,7 @@ upgrade_app() {
         sed -r -i 's|version = "[[:alnum:].]{4,8}~ynh[[:alnum:].]{1,2}"|version = "'"${app_version}"'~ynh1"|' ../manifest.toml
         sed -r -i 's|"seafileltd/seafile-mc:[[:alnum:].]{4,10}"|"seafileltd/seafile-mc:'"${app_version}"'"|' ../manifest.toml
         sed -r -i 's|"seafileltd/notification-server:[[:alnum:].]{4,10}"|"seafileltd/notification-server:'"${notification_remote_version}"'"|' ../manifest.toml
-        sed -r -i 's|"seafileltd/notification-server:[[:alnum:].]{4,10}"|"seafileltd/sdoc-server:'"${seadoc_remote_version}"'"|' ../manifest.toml
+        sed -r -i 's|"seafileltd/sdoc-server:[[:alnum:].]{4,10}"|"seafileltd/sdoc-server:'"${seadoc_remote_version}"'"|' ../manifest.toml
         sed -r -i "s|$prev_main_sha256sum_amd64|$docker_main_checksum_amd64|" ../manifest.toml
         sed -r -i "s|$prev_main_sha256sum_arm64|$docker_main_checksum_arm64|" ../manifest.toml
         sed -r -i "s|$prev_notification_sha256sum_amd64|$docker_notification_checksum_amd64|" ../manifest.toml
