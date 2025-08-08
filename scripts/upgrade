@@ -222,8 +222,6 @@ yunohost service add "$app-doc-converter" --description='Seafile online collabor
 
 # restart seafile server
 ynh_script_progression "Starting seafile services..."
-ynh_systemctl --service=memcached.service -p "systemd"
-sleep 5
 ynh_systemctl --service="$app" --wait_until='Seafile server started' --log_path=systemd
 sleep 2
 ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=systemd
