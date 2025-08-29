@@ -144,7 +144,7 @@ ram.runtime = "1G"
     amd64.sha256 = "74c31eb6ab133e4b2f64dd84c908617fe1f1af427b2d25958847b6fae7325862"
 
     arm64.url = "seafileltd/notification-server:13.0.7"
-    arm64.sha256 = ""
+    arm64.sha256 = "asdfasdfjalsdfjh8awe823rj89asef89q6awe8f934rjfi"
 
     [resources.sources.seadoc]
     format = "docker"
