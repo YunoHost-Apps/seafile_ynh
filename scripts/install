@@ -195,12 +195,12 @@ set_permission
 # Add sso config to unprotect domain.tld/seafhttp + domain.tld/seafdav
 ynh_script_progression --message="Configuring permissions..."
 ynh_permission_create --permission=file_server --url=$domain/seafhttp --auth_header=false \
-                      --label="File server" --protected=true --allowed=visitors
+                      --protected=true --allowed=visitors
 ynh_permission_create --permission=webdav --url=$domain/seafdav --auth_header=true \
-                      --label="Webdav" --protected=true --allowed=visitors
+                      --protected=true --allowed=visitors
 # unprotect media
 ynh_permission_create --permission=media --url=/media --auth_header=true \
-                      --label="Media" --protected=true --allowed=visitors
+                      --protected=true --allowed=visitors
 
 if [ "$is_public" == '1' ];
 then
