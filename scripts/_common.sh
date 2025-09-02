@@ -9,6 +9,7 @@ readonly seafile_version=$(ynh_app_upstream_version)
 readonly seafile_image="$install_dir/seafile_image"
 readonly notification_image="$install_dir/notification_image"
 readonly seadoc_image="$install_dir/seadoc_image"
+readonly thumbnail_server_image="$install_dir/thumbnail-server_image"
 readonly seafile_code="$seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 readonly time_zone="$(timedatectl show --value --property=Timezone)"
@@ -29,6 +30,12 @@ systemd_seadoc_bind_mount="$systemd_base_bind_mount"
 systemd_seadoc_bind_mount+="$install_dir/seadoc-conf:/opt/sdoc-server/conf "
 systemd_seadoc_bind_mount+="/var/log/$app:/opt/sdoc-server/logs"
 
+systemd_thumbnail_bind_mount="$systemd_base_bind_mount"
+systemd_thumbnail_bind_mount+="$data_dir/seafile-data:/opt/seafile/seafile-data "
+systemd_thumbnail_bind_mount+="$data_dir/seahub-data:/opt/seafile/seahub-data "
+systemd_thumbnail_bind_mount+="/var/log/$app:/opt/seafile/logs "
+systemd_thumbnail_bind_mount+="$install_dir/conf:/opt/seafile/conf"
+
 # Create special path with / at the end
 if [[ "$path" == '/' ]]
 then
@@ -41,6 +48,10 @@ if [ "${LANG:0:2}" == C. ] || [ "${LANG}" == C ]; then
     readonly language=en
 else
     readonly language="${LANG:0:2}"
+fi
+
+if [ "$YNH_ARCH" == arm64 ]; then
+    port_thumbnail="$port_seahub"
 fi
 
 #=================================================
@@ -56,28 +67,66 @@ run_seafile_cmd() {
         "$@"
 }
 
+update_pwd_group_shadow_in_docker() {
+    grep "^$app:x" /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$1/etc/passwd"
+    grep "^$app:x" /etc/group >> "$1/etc/group"
+    grep "^$app:x" /etc/group- >> "$1/etc/group-"
+    grep "^$app:"  /etc/shadow >> "$1/etc/shadow"
+}
+
 install_source() {
     # set correct seafile version in patch
     ynh_replace --match="__SEAFILE_VERSION__" --replace="$seafile_version" --file="$YNH_APP_BASEDIR"/patches/main/import_ldap_user_when_authenticated_from_remoteUserBackend.patch
     ynh_setup_source_custom --dest_dir="$seafile_image" --full_replace
-    mkdir -p "$install_dir"/seafile_image/opt/seafile/{seafile-data,seahub-data,conf,ccnet,logs,pids}
-    grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$seafile_image/etc/passwd"
-    grep "^$app:x"  /etc/group >> "$seafile_image/etc/group"
-    grep "^$app:x"  /etc/group- >> "$seafile_image/etc/group-"
-    grep "^$app:"  /etc/shadow >> "$seafile_image/etc/shadow"
+    update_pwd_group_shadow_in_docker "$seafile_image"
+    mkdir -p "$seafile_image/opt/seafile/"{seafile-data,seahub-data,conf,ccnet,logs,pids}
 
     ynh_setup_source_custom --dest_dir="$notification_image" --full_replace --source_id=notification_server
-    grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$notification_image/etc/passwd"
-    grep "^$app:x"  /etc/group >> "$notification_image/etc/group"
-    grep "^$app:x"  /etc/group- >> "$notification_image/etc/group-"
-    grep "^$app:"  /etc/shadow >> "$notification_image/etc/shadow"
+    update_pwd_group_shadow_in_docker "$notification_image"
 
     ynh_setup_source_custom --dest_dir="$seadoc_image" --full_replace --source_id=seadoc
-    grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$seadoc_image/etc/passwd"
-    grep "^$app:x"  /etc/group >> "$seadoc_image/etc/group"
-    grep "^$app:x"  /etc/group- >> "$seadoc_image/etc/group-"
-    grep "^$app:"  /etc/shadow >> "$seadoc_image/etc/shadow"
+    update_pwd_group_shadow_in_docker "$seadoc_image"
     mkdir -p "$seadoc_image/opt/sdoc-server/"{logs,conf}
+
+    if [ "$YNH_ARCH" != arm64 ]; then
+        ynh_setup_source_custom --dest_dir="$thumbnail_server_image" --full_replace --source_id=thumbnail_server
+        update_pwd_group_shadow_in_docker "$thumbnail_server_image"
+        mkdir -p "$thumbnail_server_image/opt/seafile/"{seafile-data,seahub-data,conf,logs}
+
+        ynh_replace --match='config = uvicorn.Config(app, port=8088)' \
+                    --replace="config = uvicorn.Config(app, port=$port_thumbnail)" \
+                    --file="$thumbnail_server_image/opt/seafile/thumbnail-server/main.py"
+    fi
+}
+
+configure_env_files() {
+    ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
+    ynh_config_add --jinja --template=seafile-notification_env.j2 --destination="$install_dir"/notification_server_env.conf
+    ynh_config_add --jinja --template=seafile-doc_env.j2 --destination="$install_dir/seadoc_env.conf"
+    ynh_config_add --jinja --template=seafile-thumbnail_env.j2 --destination="$install_dir/thumbnail_env.conf"
+}
+
+configure_systemd_services() {
+    # Add Seafile Server to startup
+    ynh_script_progression "Configuring $app's systemd service..."
+    ynh_config_add_systemd --service="$app" --template=seafile.service
+    ynh_config_add_systemd --service=seahub --template=seahub.service
+    ynh_config_add_systemd --service="$app-notification" --template=seafile-notification.service
+    ynh_config_add_systemd --service="$app-doc-server" --template=seafile-doc-server.service
+    ynh_config_add_systemd --service="$app-doc-converter" --template=seafile-doc-converter.service
+    if [ "$YNH_ARCH" != arm64 ]; then
+        ynh_config_add_systemd --service="$app-thumbnail" --template=seafile-thumbnail.service
+    fi
+
+    # register yunohost service
+    yunohost service add "$app" --description 'Main service for seafile server.'
+    yunohost service add seahub --description 'Seafile server web interface.'
+    yunohost service add "$app"-notification --description 'Seafile client notification server.'
+    yunohost service add "$app-doc-server" --description 'Seafile online collaborative document editor server.'
+    yunohost service add "$app-doc-converter" --description 'Seafile online collaborative document editor converter.'
+    if [ "$YNH_ARCH" != arm64 ]; then
+        yunohost service add "$app-thumbnail" --description 'Server to create thumbnails for images, videos, PDFs and other file types.'
+    fi
 }
 
 set_permission() {

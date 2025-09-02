@@ -9,7 +9,7 @@ ExecStop=/opt/seafile/seafile-server-__SEAFILE_VERSION__/seahub.sh stop
 User=__APP__
 Group=__APP__
 
-# Config releated to run in docker provied file system
+# Config related to run in docker provided file system
 RootDirectory=__INSTALL_DIR__/seafile_image
 BindPaths=__SYSTEMD_SEAFILE_BIND_MOUNT__
 EnvironmentFile=__INSTALL_DIR__/seafile_env.conf

@@ -42,9 +42,7 @@ ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
 
 ynh_script_progression "Configuring application..."
 
-ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
-ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
-ynh_config_add --jinja --template=seadoc_env.j2 --destination="$install_dir/seadoc_env.conf"
+configure_env_files
 
 # Run install script
 set_permission
@@ -96,19 +94,7 @@ ynh_replace_regex --match=__PASSWORD__ --replace="$admin_password" --file="$inst
 ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seafile_code/seahub.sh"
 
 # Add Seafile Server to startup
-ynh_script_progression "Configuring $app's systemd service..."
-ynh_config_add_systemd --service="$app" --template=seafile.service
-ynh_config_add_systemd --service=seahub --template=seahub.service
-ynh_config_add_systemd --service="$app-notification" --template=seafile-notification.service
-ynh_config_add_systemd --service="$app-doc-server" --template=seafile-doc-server.service
-ynh_config_add_systemd --service="$app-doc-converter" --template=seafile-doc-converter.service
-
-# register yunohost service
-yunohost service add "$app" --description 'Main service for seafile server.'
-yunohost service add seahub --description 'Seafile server web interface.'
-yunohost service add "$app"-notification --description 'Seafile client notification server.'
-yunohost service add "$app-doc-server" --description='Seafile online collaborative document editor server.'
-yunohost service add "$app-doc-converter" --description='Seafile online collaborative document editor converter.'
+configure_systemd_services
 
 # Config nginx
 ynh_script_progression "Configuring nginx..."
@@ -138,5 +124,8 @@ ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=syste
 ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
 ynh_systemctl --service="$app"-doc-server.service --wait_until="server is serve on http://127.0.0.1" --log_path=systemd
 ynh_systemctl --service="$app"-doc-converter.service --log_path=systemd
+if [ "$YNH_ARCH" != arm64 ]; then
+    ynh_systemctl --service="$app"-thumbnail.service --log_path=systemd
+fi
 
 ynh_script_progression "Installation of $app completed"

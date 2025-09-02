@@ -1,18 +1,18 @@
 [Unit]
-Description=Seadoc server
+Description=Seafile thumbnail server
 After=network.target mysql.service seafile.service
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/sdoc-server/sdoc-server-latest/sdoc-server
-ExecStart=/usr/bin/nodejs --max-old-space-size=4096 ./dist/_bin/www.js
+WorkingDirectory=/opt/seafile/thumbnail-server
+ExecStart=/usr/bin/python3 main.py
 User=__APP__
 Group=__APP__
 
 # Config related to run in docker provided file system
-RootDirectory=__SEADOC_IMAGE__
-BindPaths=__SYSTEMD_SEADOC_BIND_MOUNT__
-EnvironmentFile=__INSTALL_DIR__/seadoc_env.conf
+RootDirectory=__THUMBNAIL_SERVER_IMAGE__
+BindPaths=__SYSTEMD_THUMBNAIL_BIND_MOUNT__
+EnvironmentFile=__INSTALL_DIR__/thumbnail_env.conf
 
 # Sandboxing options to harden security
 # Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html

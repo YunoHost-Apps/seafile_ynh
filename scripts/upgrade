@@ -103,9 +103,7 @@ ynh_script_progression "Configuring application..."
 # permission to execute update script and expect helper
 set_permission
 
-ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
-ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
-ynh_config_add --jinja --template=seadoc_env.j2 --destination="$install_dir/seadoc_env.conf"
+configure_env_files
 
 # do the upgrade    ( the ";&" syntax mean when it go in the first case which is true it do all the next case)
 case "$installed_version" in
@@ -189,12 +187,7 @@ ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seaf
 ynh_config_add_nginx 'seahub_port fileserver_port webdav_port'
 
 # Add Seafile Server to startup
-ynh_script_progression "Updating systemd units..."
-ynh_config_add_systemd --service="$app" --template=seafile.service
-ynh_config_add_systemd --service=seahub --template=seahub.service
-ynh_config_add_systemd --service="$app-notification" --template=seafile-notification.service
-ynh_config_add_systemd --service="$app-doc-server" --template=seafile-doc-server.service
-ynh_config_add_systemd --service="$app-doc-converter" --template=seafile-doc-converter.service
+configure_systemd_services
 
 #=================================================
 
@@ -210,14 +203,6 @@ ynh_config_add_logrotate /var/log/"$app"
 ynh_script_progression "Configuring fail2ban..."
 ynh_config_add_fail2ban --logpath="$install_dir"/logs/seahub.log
 
-# register yunohost service
-ynh_script_progression "Register seafile service..."
-yunohost service add "$app" --description 'Main service for seafile server.'
-yunohost service add seahub --description 'Seafile server web interface.'
-yunohost service add "$app"-notification --description 'Seafile client notification server.'
-yunohost service add "$app-doc-server" --description='Seafile online collaborative document editor server.'
-yunohost service add "$app-doc-converter" --description='Seafile online collaborative document editor converter.'
-
 # delete seafile cache
 
 # restart seafile server
@@ -228,6 +213,9 @@ ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=syste
 ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
 ynh_systemctl --service="$app"-doc-server.service --wait_until="server is serve on http://127.0.0.1" --log_path=systemd
 ynh_systemctl --service="$app"-doc-converter.service --log_path=systemd
+if [ "$YNH_ARCH" != arm64 ]; then
+    ynh_systemctl --service="$app"-thumbnail.service --log_path=systemd
+fi
 
 # remove old version files
 ynh_script_progression "Cleaning system and updating settings..."

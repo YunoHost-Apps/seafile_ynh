@@ -24,7 +24,7 @@ architectures = ["amd64", "arm64"]
 multi_instance = false
 ldap = true
 sso = true
-disk = "4G"
+disk = "5G"
 ram.build = "0M"
 ram.runtime = "1G"
 
@@ -82,12 +82,12 @@ ram.runtime = "1G"
     file_server.show_tile = false
     file_server.protected = true
 
-    notification_server.url = "__DOMAIN__/notification"
-    notification_server.label = "Notification server"
-    notification_server.allowed = "visitors"
-    notification_server.auth_header = false
-    notification_server.show_tile = false
-    notification_server.protected = true
+    notification.url = "__DOMAIN__/notification"
+    notification.label = "Client-notification"
+    notification.allowed = "visitors"
+    notification.auth_header = false
+    notification.protected = true
+    notification.show_tile = false
 
     seadoc.url = "/sdoc"
     seadoc.label = "Seadoc"
@@ -103,13 +103,6 @@ ram.runtime = "1G"
     webdav.protected = true
     webdav.show_tile = false
 
-    notification.url = "__DOMAIN__/notification"
-    notification.label = "Client-notification"
-    notification.allowed = "visitors"
-    notification.auth_header = false
-    notification.protected = true
-    notification.show_tile = false
-
     media.url = "/media"
     media.label = "Media"
     media.allowed = "visitors"
@@ -117,12 +110,20 @@ ram.runtime = "1G"
     media.protected = true
     media.show_tile = false
 
+    thumbnail.url = "/thumbnail"
+    thumbnail.label = "Thumbnail"
+    thumbnail.allowed = "visitors"
+    thumbnail.auth_header = false
+    thumbnail.protected = true
+    thumbnail.show_tile = false
+
     [resources.ports]
     seahub.default = 8000
     fileserver.default = 8082
     notificationserver.default = 8083
     webdav.default = 8080
     seadoc.default = 8084
+    thumbnail.default = 8085
 
     [resources.sources.main]
     format = "docker"
@@ -156,6 +157,14 @@ ram.runtime = "1G"
 
     arm64.url = "seafileltd/sdoc-server:2.0.6"
     arm64.sha256 = "6d4b1918542d152dee3e0d92054ca3d3c45119f4c81ae251fae3806648527ab7"
+
+    [resources.sources.thumbnail_server]
+    format = "docker"
+    extract = true
+    prefetch = false
+
+    amd64.url = "seafileltd/thumbnail-server:13.0.9"
+    amd64.sha256 = "5eee6d7f4892588608f7216cc5c34fc959d7d7424dbed4fc5a07997f77776704"
 
     [resources.apt]
     packages = ["mariadb-server", "redis-server"]

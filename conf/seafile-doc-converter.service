@@ -9,7 +9,7 @@ ExecStart=/usr/bin/python3 -u seadoc_converter/main.py
 User=__APP__
 Group=__APP__
 
-# Config releated to run in docker provied file system
+# Config related to run in docker provided file system
 RootDirectory=__SEADOC_IMAGE__
 BindPaths=__SYSTEMD_SEADOC_BIND_MOUNT__
 EnvironmentFile=__INSTALL_DIR__/seadoc_env.conf

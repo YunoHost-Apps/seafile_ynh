@@ -24,6 +24,9 @@ ynh_systemctl --service=seahub --action=stop
 ynh_systemctl --service="$app"-notification.service --action=stop
 ynh_systemctl --service="$app"-doc-server.service --action=stop
 ynh_systemctl --service="$app"-doc-converter.service --action=stop
+if [ "$YNH_ARCH" != arm64 ]; then
+    ynh_systemctl --service="$app"-thumbnail.service --action=stop
+fi
 sleep 2
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
@@ -38,8 +41,7 @@ ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile
 ynh_config_add --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
 ynh_config_add --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
 ynh_config_add --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
-ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
-ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
+configure_env_files
 
 # Update permissions
 ynh_permission_url --permission=file_server --url="$domain"/seafhttp
@@ -59,5 +61,8 @@ ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=syste
 ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
 ynh_systemctl --service="$app"-doc-server.service --wait_until="server is serve on http://127.0.0.1" --log_path=systemd
 ynh_systemctl --service="$app"-doc-converter.service --log_path=systemd
+if [ "$YNH_ARCH" != arm64 ]; then
+    ynh_systemctl --service="$app"-thumbnail.service --log_path=systemd
+fi
 
 ynh_script_progression "Change of URL completed for $app" --time=

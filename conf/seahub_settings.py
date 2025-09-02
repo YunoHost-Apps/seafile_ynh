@@ -297,16 +297,14 @@ WEBDAV_SECRET_STRENGTH_LEVEL = 3
 
 # Enable or disable thumbnails
 # NOTE: since version 4.0.2
-# ENABLE_THUMBNAIL = True
+ENABLE_THUMBNAIL = True
 
 # Seafile only generates thumbnails for images smaller than the following size.
 # Since version 6.3.8 pro, suport the psd online preview.
 # THUMBNAIL_IMAGE_SIZE_LIMIT = 30 # MB
 
-# Enable or disable thumbnail for video. ffmpeg and moviepy should be installed first.
-# For details, please refer to https://manual.seafile.com/deploy/video_thumbnails.html
-# NOTE: this option is deprecated in version 7.1
-# ENABLE_VIDEO_THUMBNAIL = False
+# video thumbnails
+ENABLE_VIDEO_THUMBNAIL = True
 
 # Use the frame at 5 second as thumbnail
 # NOTE: this option is deprecated in version 7.1
