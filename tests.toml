@@ -20,9 +20,9 @@ test_format = 1.0
     # Commits to test upgrade from
     # -------------------------------
 
-    test_upgrade_from.c11c24b.name = "Version 8.x (Old_version_for_CI_5 branch)"
+    test_upgrade_from.2036d090cb54a56a3922ea4bb2dc8d639107664c.name = "Version 8.x (Old_version_for_CI_5 branch)"
     test_upgrade_from.7a4d00a.name = "Version 9.x"
-    test_upgrade_from.ef7eb6f.name = "Pre packaging v2 (Old_version_for_CI_6 branch)"
+    test_upgrade_from.12a521d3b31cc838c3b93089d29fbe4c4bfb89e2.name = "Pre packaging v2 (Old_version_for_CI_6 branch)"
     test_upgrade_from.5a4717a.name = "Before helper 2.1"
     test_upgrade_from.f6160e7.name = "Seafile 11"
     test_upgrade_from.26e5265.name = "Seafile 12"
