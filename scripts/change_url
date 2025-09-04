@@ -44,8 +44,12 @@ ynh_config_add --template=seafevents.conf --destination="$install_dir"/conf/seaf
 configure_env_files
 
 # Update permissions
+if [ "$old_domain" != "$domain" ]; then
+    ynh_permission_url --permission=main --remove_url="$old_domain"/socket.io --add_url="$domain"/socket.io
+fi
 ynh_permission_url --permission=file_server --url="$domain"/seafhttp
 ynh_permission_url --permission=webdav --url="$domain"/seafdav
+ynh_permission_url --permission=notification --url="$domain"/notification
 
 # Clean url in config in DB
 clean_url_in_db_config
