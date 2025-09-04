@@ -86,8 +86,8 @@ ram.runtime = "1G"
     notification.label = "Client-notification"
     notification.allowed = "visitors"
     notification.auth_header = false
-    notification.protected = true
     notification.show_tile = false
+    notification.protected = true
 
     seadoc.url = "/sdoc"
     seadoc.label = "Seadoc"
@@ -100,22 +100,22 @@ ram.runtime = "1G"
     webdav.label = "Webdav"
     webdav.allowed = "visitors"
     webdav.auth_header = false
-    webdav.protected = true
     webdav.show_tile = false
+    webdav.protected = true
 
     media.url = "/media"
     media.label = "Media"
     media.allowed = "visitors"
     media.auth_header = true
-    media.protected = true
     media.show_tile = false
+    media.protected = true
 
     thumbnail.url = "/thumbnail"
     thumbnail.label = "Thumbnail"
     thumbnail.allowed = "visitors"
     thumbnail.auth_header = false
-    thumbnail.protected = true
     thumbnail.show_tile = false
+    thumbnail.protected = true
 
     [resources.ports]
     seahub.default = 8000
