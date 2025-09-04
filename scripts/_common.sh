@@ -109,7 +109,6 @@ configure_env_files() {
 
 configure_systemd_services() {
     # Add Seafile Server to startup
-    ynh_script_progression "Configuring $app's systemd service..."
     ynh_config_add_systemd --service="$app" --template=seafile.service
     ynh_config_add_systemd --service=seahub --template=seahub.service
     ynh_config_add_systemd --service="$app-notification" --template=seafile-notification.service
@@ -117,16 +116,6 @@ configure_systemd_services() {
     ynh_config_add_systemd --service="$app-doc-converter" --template=seafile-doc-converter.service
     if [ "$YNH_ARCH" != arm64 ]; then
         ynh_config_add_systemd --service="$app-thumbnail" --template=seafile-thumbnail.service
-    fi
-
-    # register yunohost service
-    yunohost service add "$app" --description 'Main service for seafile server.'
-    yunohost service add seahub --description 'Seafile server web interface.'
-    yunohost service add "$app"-notification --description 'Seafile client notification server.'
-    yunohost service add "$app-doc-server" --description 'Seafile online collaborative document editor server.'
-    yunohost service add "$app-doc-converter" --description 'Seafile online collaborative document editor converter.'
-    if [ "$YNH_ARCH" != arm64 ]; then
-        yunohost service add "$app-thumbnail" --description 'Server to create thumbnails for images, videos, PDFs and other file types.'
     fi
 }
 

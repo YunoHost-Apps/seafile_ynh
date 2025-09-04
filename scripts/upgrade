@@ -187,7 +187,18 @@ ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seaf
 ynh_config_add_nginx 'seahub_port fileserver_port webdav_port'
 
 # Add Seafile Server to startup
+ynh_script_progression "Configuring $app's systemd service..."
 configure_systemd_services
+
+# register yunohost service
+yunohost service add "$app" --description 'Main service for seafile server.'
+yunohost service add seahub --description 'Seafile server web interface.'
+yunohost service add "$app"-notification --description 'Seafile client notification server.'
+yunohost service add "$app-doc-server" --description 'Seafile online collaborative document editor server.'
+yunohost service add "$app-doc-converter" --description 'Seafile online collaborative document editor converter.'
+if [ "$YNH_ARCH" != arm64 ]; then
+    yunohost service add "$app-thumbnail" --description 'Server to create thumbnails for images, videos, PDFs and other file types.'
+fi
 
 #=================================================
 

@@ -56,10 +56,10 @@ ynh_script_progression "Register seafile service..."
 yunohost service add "$app" --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
 yunohost service add "$app"-notification --description 'Seafile client notification server.'
-yunohost service add "$app-doc-server" --description='Seafile online collaborative document editor server.'
-yunohost service add "$app-doc-converter" --description='Seafile online collaborative document editor converter.'
+yunohost service add "$app-doc-server" --description 'Seafile online collaborative document editor server.'
+yunohost service add "$app-doc-converter" --description 'Seafile online collaborative document editor converter.'
 if [ "$YNH_ARCH" != arm64 ]; then
-    yunohost service add "$app-thumbnail" --description='Server to create thumbnails for images, videos, PDFs and other file types.'
+    yunohost service add "$app-thumbnail" --description 'Server to create thumbnails for images, videos, PDFs and other file types.'
 fi
 
 ynh_script_progression "Reloading services..."
