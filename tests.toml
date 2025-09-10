@@ -62,9 +62,8 @@ test_format = 1.0
     thumbnail.expect_content = "{\"error\": \"Page not found.\"}"
     thumbnail.expect_return_code = 404
 
-    # Ideally we would like to test it too
-    # but it seem quite complicated because it need a special user password
-    # webdav.base_url = "https://yolo.test"
-    # webdav.path = "/seafdav/"
-    # webdav.logged_on_sso = true
-    # webdav.expect_content = "This is the WebDAV interface."
+    webdav.base_url = "https://__DOMAIN__"
+    webdav.path = "/seafdav/Home/"
+    webdav.logged_on_sso = false
+    webdav.expect_title = "401 Access not authorized"
+    webdav.expect_return_code = 401
