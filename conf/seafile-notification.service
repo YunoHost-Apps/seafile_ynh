@@ -1,7 +1,6 @@
 [Unit]
 Description=Seafile notification server
-After=network.target
-After=mysql.service
+After=network.target mysql.service seafile.service
 
 [Service]
 Type=simple
@@ -9,8 +8,8 @@ ExecStart=/opt/seafile/notification-server -c /opt/notification-data
 User=__APP__
 Group=__APP__
 
-# Config releated to run in docker provied file system
-RootDirectory=__INSTALL_DIR__/notification_image
+# Config related to run in docker provided file system
+RootDirectory=__NOTIFICATION_IMAGE__
 BindPaths=__SYSTEMD_NOTIFICATION_SERVER_BIND_MOUNT__
 EnvironmentFile=__INSTALL_DIR__/notification_server_env.conf
 

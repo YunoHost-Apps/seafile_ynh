@@ -8,6 +8,8 @@ readonly seafile_version=$(ynh_app_upstream_version)
 
 readonly seafile_image="$install_dir/seafile_image"
 readonly notification_image="$install_dir/notification_image"
+readonly seadoc_image="$install_dir/seadoc_image"
+readonly thumbnail_server_image="$install_dir/thumbnail-server_image"
 readonly seafile_code="$seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 readonly time_zone="$(timedatectl show --value --property=Timezone)"
@@ -16,12 +18,23 @@ readonly systemd_base_bind_mount="/proc /dev /usr/share/zoneinfo "
 systemd_seafile_bind_mount="$systemd_base_bind_mount"
 systemd_seafile_bind_mount+="$data_dir/seafile-data:/opt/seafile/seafile-data "
 systemd_seafile_bind_mount+="$data_dir/seahub-data:/opt/seafile/seahub-data "
+systemd_seafile_bind_mount+="/run/$app/pids:/opt/seafile/pids "
 systemd_seafile_bind_mount+="/var/log/$app:/opt/seafile/logs "
 systemd_seafile_bind_mount+="$install_dir/conf:/opt/seafile/conf "
 systemd_seafile_bind_mount+="$install_dir/ccnet:/opt/seafile/ccnet"
 
 systemd_notification_server_bind_mount="$systemd_base_bind_mount"
 systemd_notification_server_bind_mount+="$data_dir/notification-data:/opt/notification-data"
+
+systemd_seadoc_bind_mount="$systemd_base_bind_mount"
+systemd_seadoc_bind_mount+="$install_dir/seadoc-conf:/opt/sdoc-server/conf "
+systemd_seadoc_bind_mount+="/var/log/$app:/opt/sdoc-server/logs"
+
+systemd_thumbnail_bind_mount="$systemd_base_bind_mount"
+systemd_thumbnail_bind_mount+="$data_dir/seafile-data:/opt/seafile/seafile-data "
+systemd_thumbnail_bind_mount+="$data_dir/seahub-data:/opt/seafile/seahub-data "
+systemd_thumbnail_bind_mount+="/var/log/$app:/opt/seafile/logs "
+systemd_thumbnail_bind_mount+="$install_dir/conf:/opt/seafile/conf"
 
 # Create special path with / at the end
 if [[ "$path" == '/' ]]
@@ -37,33 +50,73 @@ else
     readonly language="${LANG:0:2}"
 fi
 
+if [ "$YNH_ARCH" == arm64 ]; then
+    port_thumbnail="$port_seahub"
+fi
+
 #=================================================
 # DEFINE ALL COMMON FONCTIONS
 #=================================================
 
 run_seafile_cmd() {
-    ynh_hide_warnings systemd-run --wait --pty --uid="$app" --gid="$app" \
+    mkdir -p "/run/$app/pids"
+    ynh_hide_warnings systemd-run --wait --pipe --uid="$app" --gid="$app" \
         --property=RootDirectory="$install_dir"/seafile_image \
         --property="BindPaths=$systemd_seafile_bind_mount" \
         --property=EnvironmentFile="$install_dir"/seafile_env.conf \
         "$@"
 }
 
+update_pwd_group_shadow_in_docker() {
+    grep "^$app:x" /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$1/etc/passwd"
+    grep "^$app:x" /etc/group >> "$1/etc/group"
+    grep "^$app:x" /etc/group- >> "$1/etc/group-"
+    grep "^$app:"  /etc/shadow >> "$1/etc/shadow"
+}
+
 install_source() {
     # set correct seafile version in patch
     ynh_replace --match="__SEAFILE_VERSION__" --replace="$seafile_version" --file="$YNH_APP_BASEDIR"/patches/main/import_ldap_user_when_authenticated_from_remoteUserBackend.patch
     ynh_setup_source_custom --dest_dir="$seafile_image" --full_replace
-    mkdir -p "$install_dir"/seafile_image/opt/seafile/{seafile-data,seahub-data,conf,ccnet,logs}
-    grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$install_dir"/seafile_image/etc/passwd
-    grep "^$app:x"  /etc/group >> "$install_dir"/seafile_image/etc/group
-    grep "^$app:x"  /etc/group- >> "$install_dir"/seafile_image/etc/group-
-    grep "^$app:"  /etc/shadow >> "$install_dir"/seafile_image/etc/shadow
+    update_pwd_group_shadow_in_docker "$seafile_image"
+    mkdir -p "$seafile_image/opt/seafile/"{seafile-data,seahub-data,conf,ccnet,logs,pids}
 
     ynh_setup_source_custom --dest_dir="$notification_image" --full_replace --source_id=notification_server
-    grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$install_dir"/seafile_image/etc/passwd
-    grep "^$app:x"  /etc/group >> "$install_dir"/seafile_image/etc/group
-    grep "^$app:x"  /etc/group- >> "$install_dir"/seafile_image/etc/group-
-    grep "^$app:"  /etc/shadow >> "$install_dir"/seafile_image/etc/shadow
+    update_pwd_group_shadow_in_docker "$notification_image"
+
+    ynh_setup_source_custom --dest_dir="$seadoc_image" --full_replace --source_id=seadoc
+    update_pwd_group_shadow_in_docker "$seadoc_image"
+    mkdir -p "$seadoc_image/opt/sdoc-server/"{logs,conf}
+
+    if [ "$YNH_ARCH" != arm64 ]; then
+        ynh_setup_source_custom --dest_dir="$thumbnail_server_image" --full_replace --source_id=thumbnail_server
+        update_pwd_group_shadow_in_docker "$thumbnail_server_image"
+        mkdir -p "$thumbnail_server_image/opt/seafile/"{seafile-data,seahub-data,conf,logs}
+
+        # workaround until https://github.com/haiwen/seafile-thumbnail-server/pull/11 is merged and released
+        ynh_replace --match='config = uvicorn.Config(app, port=8088)' \
+                    --replace="config = uvicorn.Config(app, port=$port_thumbnail)" \
+                    --file="$thumbnail_server_image/opt/seafile/thumbnail-server/main.py"
+    fi
+}
+
+configure_env_files() {
+    ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
+    ynh_config_add --jinja --template=seafile-notification_env.j2 --destination="$install_dir"/notification_server_env.conf
+    ynh_config_add --jinja --template=seafile-doc_env.j2 --destination="$install_dir/seadoc_env.conf"
+    ynh_config_add --jinja --template=seafile-thumbnail_env.j2 --destination="$install_dir/thumbnail_env.conf"
+}
+
+configure_systemd_services() {
+    # Add Seafile Server to startup
+    ynh_config_add_systemd --service="$app" --template=seafile.service
+    ynh_config_add_systemd --service=seahub --template=seahub.service
+    ynh_config_add_systemd --service="$app-notification" --template=seafile-notification.service
+    ynh_config_add_systemd --service="$app-doc-server" --template=seafile-doc-server.service
+    ynh_config_add_systemd --service="$app-doc-converter" --template=seafile-doc-converter.service
+    if [ "$YNH_ARCH" != arm64 ]; then
+        ynh_config_add_systemd --service="$app-thumbnail" --template=seafile-thumbnail.service
+    fi
 }
 
 set_permission() {
@@ -71,8 +124,10 @@ set_permission() {
     chmod u=rwx,g=rx,o= "$install_dir"
     chown -R "$app:$app" "$install_dir"/{conf,ccnet}
     chmod -R u+rwX,g+rX-w,o= "$install_dir"/{conf,ccnet}
-    chown -R "$app:$app" "$install_dir"/seafile_image/opt/seafile
-    chmod -R u+rwX,g-w,o= "$install_dir"/seafile_image/opt/seafile
+    chown -R "$app:$app" "$seafile_image/opt/seafile"
+    chmod -R u+rwX,g-w,o= "$seafile_image/opt/seafile"
+    chown -R "$app:$app" "$seadoc_image/opt/sdoc-server"
+    chmod -R u+rwX,g-w,o= "$seadoc_image/opt/sdoc-server"
     chown -R "$app:$app" /var/log/"$app"
     chmod -R u=rwX,g=rX,o= /var/log/"$app"
 
@@ -87,9 +142,8 @@ set_permission() {
     test -e "$install_dir/seafile_image/opt/seafile/seahub-data" && setfacl -m user:www-data:rX "$install_dir/seafile_image/opt/seafile/seahub-data"
     test -e "$seafile_code/seahub/media" && setfacl -R -m user:www-data:rX "$seafile_code/seahub/media"
 
-    # At install time theses directory are not available
-    test -e "$install_dir"/seahub-data && setfacl -m user:www-data:rX "$data_dir"
-    test -e "$install_dir"/seahub-data && setfacl -R -m user:www-data:rX "$data_dir"/seahub-data
+    setfacl -m user:www-data:rX "$data_dir"
+    setfacl -R -m user:www-data:rX "$data_dir"/seahub-data
 
     chmod u=rwx,g=rx,o= "$data_dir"
     find "$data_dir" \(   \! -perm -o= \

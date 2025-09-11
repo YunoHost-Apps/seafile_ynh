@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "12.0.14~ynh1"
+version = "13.0.9~ynh1"
 
 maintainers = ["Josué Tille"]
 
@@ -24,9 +24,9 @@ architectures = ["amd64", "arm64"]
 multi_instance = false
 ldap = true
 sso = true
-disk = "1.5G"
+disk = "5G"
 ram.build = "0M"
-ram.runtime = "500M"
+ram.runtime = "1G"
 
 [install]
     [install.domain]
@@ -73,6 +73,7 @@ ram.runtime = "500M"
 
     [resources.permissions]
     main.url = "/"
+    main.additional_urls = ["__DOMAIN__/socket.io"]
 
     file_server.url = "__DOMAIN__/seafhttp"
     file_server.label = "File server"
@@ -81,64 +82,92 @@ ram.runtime = "500M"
     file_server.show_tile = false
     file_server.protected = true
 
-    notification_server.url = "__DOMAIN__/notification"
-    notification_server.label = "Notification server"
-    notification_server.allowed = "visitors"
-    notification_server.auth_header = false
-    notification_server.show_tile = false
-    notification_server.protected = true
+    notification.url = "__DOMAIN__/notification"
+    notification.label = "Client-notification"
+    notification.allowed = "visitors"
+    notification.auth_header = false
+    notification.show_tile = false
+    notification.protected = true
+
+    seadoc.url = "/sdoc"
+    seadoc.label = "Seadoc"
+    seadoc.allowed = "visitors"
+    seadoc.auth_header = false
+    seadoc.show_tile = false
+    seadoc.protected = true
 
     webdav.url = "__DOMAIN__/seafdav"
     webdav.label = "Webdav"
     webdav.allowed = "visitors"
     webdav.auth_header = false
-    webdav.protected = true
     webdav.show_tile = false
-
-    notification.url = "__DOMAIN__/notification"
-    notification.label = "Client-notification"
-    notification.allowed = "visitors"
-    notification.auth_header = false
-    notification.protected = true
-    notification.show_tile = false
+    webdav.protected = true
 
     media.url = "/media"
     media.label = "Media"
     media.allowed = "visitors"
     media.auth_header = true
-    media.protected = true
     media.show_tile = false
+    media.protected = true
+
+    thumbnail.url = "/thumbnail"
+    thumbnail.label = "Thumbnail"
+    thumbnail.allowed = "visitors"
+    thumbnail.auth_header = false
+    thumbnail.show_tile = false
+    thumbnail.protected = true
 
     [resources.ports]
     seahub.default = 8000
     fileserver.default = 8082
     notificationserver.default = 8083
     webdav.default = 8080
+    seadoc.default = 8084
+    thumbnail.default = 8085
 
     [resources.sources.main]
     format = "docker"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/seafile-mc:12.0.14"
-    amd64.sha256 = "7bbe7043facbc639a8e6144f32d50dc4d771191ecaa68002efb2b0237fb90358"
+    amd64.url = "seafileltd/seafile-mc:13.0.9"
+    amd64.sha256 = "0559e10b85240053048a6dffe176c043b8f42301ca101517ea81c3296ea8eb8a"
 
-    arm64.url = "seafileltd/seafile-mc:12.0.14"
-    arm64.sha256 = "799fd6b4b30135bba6e4b95ec46108fe4225818fc2b17d742d6077c075dbb5ec"
+    arm64.url = "seafileltd/seafile-mc:13.0.9"
+    arm64.sha256 = "c05394dfab48c7d292051a2deba1a00050552be7ada88abd364dea8b21c31eb1"
 
     [resources.sources.notification_server]
     format = "docker"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/notification-server:12.0.11"
-    amd64.sha256 = "aaadbf8ab409057ffdb401d0940822d6ca2909db361610a678684fcd710555f4"
+    amd64.url = "seafileltd/notification-server:13.0.7"
+    amd64.sha256 = "74c31eb6ab133e4b2f64dd84c908617fe1f1af427b2d25958847b6fae7325862"
 
-    arm64.url = "seafileltd/notification-server:12.0.11"
-    arm64.sha256 = "89c875c05b9ce52f0fd129d1adf6601650e8dc7d5881a5d37c1b383b47f3e555"
+    arm64.url = "seafileltd/notification-server:13.0.7"
+    arm64.sha256 = "531a1520fd12cd401ef7813d1cb86b9a57fdd5722eb2b2588c1026a159de0ec3"
+
+    [resources.sources.seadoc]
+    format = "docker"
+    extract = true
+    prefetch = false
+
+    amd64.url = "seafileltd/sdoc-server:2.0.6"
+    amd64.sha256 = "6d4b1918542d152dee3e0d92054ca3d3c45119f4c81ae251fae3806648527ab7"
+
+    arm64.url = "seafileltd/sdoc-server:2.0.6"
+    arm64.sha256 = "6d4b1918542d152dee3e0d92054ca3d3c45119f4c81ae251fae3806648527ab7"
+
+    [resources.sources.thumbnail_server]
+    format = "docker"
+    extract = true
+    prefetch = false
+
+    amd64.url = "seafileltd/thumbnail-server:13.0.9"
+    amd64.sha256 = "5eee6d7f4892588608f7216cc5c34fc959d7d7424dbed4fc5a07997f77776704"
 
     [resources.apt]
-    packages = ["mariadb-server", "memcached"]
+    packages = ["mariadb-server", "redis-server"]
 
     [resources.database]
     type = "mysql"

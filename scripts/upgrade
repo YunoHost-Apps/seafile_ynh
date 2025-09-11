@@ -21,6 +21,8 @@ ynh_script_progression "Stoping services..."
 ynh_systemctl --service="$app" --action=stop
 ynh_systemctl --service=seahub --action=stop
 ynh_systemctl --service="$app"-notification.service --action=stop
+ynh_systemctl --service="$app"-doc-server.service --action=stop
+ynh_systemctl --service="$app"-doc-converter.service --action=stop
 sleep 5
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
@@ -47,14 +49,6 @@ ynh_app_setting_set_default --key=seahub_secret_key --value="$(grep -P 'SECRET_K
 # Update data dir if needed
 #
 
-# Create link to /home/yunohost.app/seafile/seafile-data in case of old install with data dir defined in config instead of symlink
-# Also update link if not pointing to correct path
-if [ ! -L /home/yunohost.app/seafile-data ] || \
-   [ "$(readlink "$install_dir"/seafile-data)" != "$data_dir/seafile-data" ]; then
-    mv "$install_dir"/seafile-data "$install_dir/seafile-data_$(date '+%Y%m%d.%H%M%S')"
-    ln -s "$data_dir"/seafile-data "$install_dir"/seafile-data
-fi
-
 # Move if needed old /home/yunohost.app/seafile-data dir to /home/yunohost.app/seafile/seafile-data
 if [ -e /home/yunohost.app/seafile-data ]; then
     if [ -e "$data_dir" ]; then
@@ -71,26 +65,30 @@ if [ -e "$data_dir"/storage ]; then
 fi
 
 # Move seahub data to /home/yunohost.app/seafile/seahub-data
-if [ ! -L "$install_dir"/seahub-data ]; then
+if [ -e "$install_dir"/seahub-data ] && [ ! -L "$install_dir"/seahub-data ]; then
     if [ -e "$data_dir"/seahub-data ]; then
         mv "$data_dir"/seahub-data "$data_dir/seahub-data_$(date '+%Y%m%d.%H%M%S')"
     fi
     mv "$install_dir"/seahub-data "$data_dir"/
-    ln -s "$data_dir"/seahub-data "$install_dir"/seahub-data
 fi
 
 # Move logs storage to /var/log/seafile
-if [ ! -L "$install_dir"/logs ]; then
+if [ -e "$install_dir"/logs ] && [ ! -L "$install_dir"/logs ]; then
     if [ -e /var/log/"$app" ]; then
         mv /var/log/"$app" /var/log/"${app}_$(date '+%Y%m%d.%H%M%S')"
     fi
     mv "$install_dir"/logs  /var/log/"${app}"
-    ln -s /var/log/"${app}" "$install_dir"/logs
+fi
+
+if [ -z "${redis_db:-}" ]; then
+    redis_db=$(ynh_redis_get_free_db)
+    ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
 fi
 
 # Ensure all data dir are created
 mkdir -p /var/log/"$app"
 mkdir -p "$data_dir"/{seafile-data,seahub-data,notification-data}
+mkdir -p "$install_dir"/{conf,ccnet,seadoc-conf}
 
 ynh_script_progression "Upgrading source files..."
 
@@ -105,8 +103,7 @@ ynh_script_progression "Configuring application..."
 # permission to execute update script and expect helper
 set_permission
 
-ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
-ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
+configure_env_files
 
 # do the upgrade    ( the ";&" syntax mean when it go in the first case which is true it do all the next case)
 case "$installed_version" in
@@ -190,10 +187,18 @@ ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seaf
 ynh_config_add_nginx 'seahub_port fileserver_port webdav_port'
 
 # Add Seafile Server to startup
-ynh_script_progression "Updating systemd units..."
-ynh_config_add_systemd --service=seafile --template="$app".service
-ynh_config_add_systemd --service=seahub --template=seahub.service
-ynh_config_add_systemd --service=seafile-notification --template="$app"-notification.service
+ynh_script_progression "Configuring $app's systemd service..."
+configure_systemd_services
+
+# register yunohost service
+yunohost service add "$app" --description 'Main service for seafile server.'
+yunohost service add seahub --description 'Seafile server web interface.'
+yunohost service add "$app"-notification --description 'Seafile client notification server.'
+yunohost service add "$app-doc-server" --description 'Seafile online collaborative document editor server.'
+yunohost service add "$app-doc-converter" --description 'Seafile online collaborative document editor converter.'
+if [ "$YNH_ARCH" != arm64 ]; then
+    yunohost service add "$app-thumbnail" --description 'Server to create thumbnails for images, videos, PDFs and other file types.'
+fi
 
 #=================================================
 
@@ -209,22 +214,19 @@ ynh_config_add_logrotate /var/log/"$app"
 ynh_script_progression "Configuring fail2ban..."
 ynh_config_add_fail2ban --logpath="$install_dir"/logs/seahub.log
 
-# register yunohost service
-ynh_script_progression "Register seafile service..."
-yunohost service add "$app" --description 'Main service for seafile server.'
-yunohost service add seahub --description 'Seafile server web interface.'
-yunohost service add "$app"-notification --description 'Seafile client notification server.'
-
 # delete seafile cache
 
 # restart seafile server
 ynh_script_progression "Starting seafile services..."
-ynh_systemctl --service=memcached.service -p "systemd"
-sleep 5
 ynh_systemctl --service="$app" --wait_until='Seafile server started' --log_path=systemd
 sleep 2
 ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=systemd
 ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
+ynh_systemctl --service="$app"-doc-server.service --wait_until="server is serve on http://127.0.0.1" --log_path=systemd
+ynh_systemctl --service="$app"-doc-converter.service --log_path=systemd
+if [ "$YNH_ARCH" != arm64 ]; then
+    ynh_systemctl --service="$app"-thumbnail.service --log_path=systemd
+fi
 
 # remove old version files
 ynh_script_progression "Cleaning system and updating settings..."

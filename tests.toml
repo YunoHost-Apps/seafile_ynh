@@ -20,8 +20,50 @@ test_format = 1.0
     # Commits to test upgrade from
     # -------------------------------
 
-    test_upgrade_from.c11c24b.name = "Version 8.x (Old_version_for_CI_5 branch)"
+    test_upgrade_from.2036d090cb54a56a3922ea4bb2dc8d639107664c.name = "Version 8.x (Old_version_for_CI_5 branch)"
     test_upgrade_from.7a4d00a.name = "Version 9.x"
-    test_upgrade_from.ef7eb6f.name = "Pre packaging v2 (Old_version_for_CI_6 branch)"
+    test_upgrade_from.12a521d3b31cc838c3b93089d29fbe4c4bfb89e2.name = "Pre packaging v2 (Old_version_for_CI_6 branch)"
     test_upgrade_from.5a4717a.name = "Before helper 2.1"
     test_upgrade_from.f6160e7.name = "Seafile 11"
+    test_upgrade_from.26e5265.name = "Seafile 12"
+
+    # -------------------------------
+    # Curl tests to validate that the app works
+    # -------------------------------
+    [default.curl_tests]
+    login.path = "/"
+    login.expect_title = "Log In - Private Seafile"
+
+    home.path = "/"
+    home.expect_title = "Private Seafile"
+    home.logged_on_sso = true
+
+    api.base_url = "https://__DOMAIN__"
+    api.path = "/seafhttp/"
+    api.expect_content = "404 page not found"
+    api.expect_return_code = 404
+
+    asset.path = "/media/avatars/default.png"
+
+    notification.base_url = "https://__DOMAIN__"
+    notification.path = "/notification/ping"
+    notification.expect_content = "{\"ret\": \"pong\"}"
+
+    sdoc.path = "/sdoc/api/v1/docs/"
+    sdoc.expect_content = "{\"error_msg\":\"You don't have permission to access.\"}"
+    sdoc.expect_return_code = 403
+
+    sdocio.base_url = "https://__DOMAIN__"
+    sdocio.path = "/socket.io/"
+    sdocio.expect_content = "{\"code\":0,\"message\":\"Transport unknown\"}"
+    sdocio.expect_return_code = 400
+
+    thumbnail.path = "/thumbnail/"
+    thumbnail.expect_content = "{\"error\": \"Page not found.\"}"
+    thumbnail.expect_return_code = 404
+
+    webdav.base_url = "https://__DOMAIN__"
+    webdav.path = "/seafdav/Home/"
+    webdav.logged_on_sso = false
+    webdav.expect_title = "401 Access not authorized"
+    webdav.expect_return_code = 401

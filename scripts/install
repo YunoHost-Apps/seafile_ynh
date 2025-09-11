@@ -23,7 +23,7 @@ fi
 
 mkdir -p /var/log/"$app"
 mkdir -p "$data_dir"/{seafile-data,seahub-data,notification-data}
-mkdir -p "$install_dir"/{conf,ccnet}
+mkdir -p "$install_dir"/{conf,ccnet,seadoc-conf}
 
 # Download new version from sources
 ynh_script_progression "Installing sources files..."
@@ -35,10 +35,14 @@ db_user=seafile
 ynh_''mysql_create_db ccnetdb "$db_user" "$db_pwd"
 ynh_''mysql_create_db seahubdb "$db_user" "$db_pwd"
 
+ynh_script_progression "Configuring redis database..."
+
+redis_db=$(ynh_redis_get_free_db)
+ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
+
 ynh_script_progression "Configuring application..."
 
-ynh_config_add --jinja --template=seafile_env.j2 --destination="$install_dir"/seafile_env.conf
-ynh_config_add --jinja --template=notification_server_env.j2 --destination="$install_dir"/notification_server_env.conf
+configure_env_files
 
 # Run install script
 set_permission
@@ -86,36 +90,22 @@ cp ../conf/create_admin.json "$install_dir"/conf/admin.txt
 ynh_replace         --match=__ADMIN__ --replace="$admin_email" --file="$install_dir"/conf/admin.txt
 ynh_replace_regex --match=__PASSWORD__ --replace="$admin_password" --file="$install_dir"/conf/admin.txt
 
-# Use symlink to store data
-if [ -e "$install_dir"/seafile-data ]; then
-    mv -t "$data_dir"/seafile-data "$install_dir"/seafile-data/*
-    ynh_safe_rm "$install_dir"/seafile-data
-fi
-if [ -e "$install_dir"/seahub-data ]; then
-    mv -t "$data_dir"/seahub-data "$install_dir"/seahub-data/*
-    ynh_safe_rm "$install_dir"/seahub-data
-fi
-if [ -e "$install_dir"/logs ]; then
-    mv -t /var/log/"$app" "$install_dir"/logs/*
-    ynh_safe_rm "$install_dir"/logs
-fi
-ln -s "$data_dir"/seafile-data "$install_dir"/seafile-data
-ln -s "$data_dir"/seahub-data "$install_dir"/seahub-data
-ln -s /var/log/"$app" "$install_dir"/logs
-
 # Fix local warning
 ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seafile_code/seahub.sh"
 
 # Add Seafile Server to startup
 ynh_script_progression "Configuring $app's systemd service..."
-ynh_config_add_systemd --service=seafile --template="$app".service
-ynh_config_add_systemd --service=seahub --template=seahub.service
-ynh_config_add_systemd --service=seafile-notification --template="$app"-notification.service
+configure_systemd_services
 
 # register yunohost service
 yunohost service add "$app" --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
 yunohost service add "$app"-notification --description 'Seafile client notification server.'
+yunohost service add "$app-doc-server" --description 'Seafile online collaborative document editor server.'
+yunohost service add "$app-doc-converter" --description 'Seafile online collaborative document editor converter.'
+if [ "$YNH_ARCH" != arm64 ]; then
+    yunohost service add "$app-thumbnail" --description 'Server to create thumbnails for images, videos, PDFs and other file types.'
+fi
 
 # Config nginx
 ynh_script_progression "Configuring nginx..."
@@ -143,5 +133,10 @@ ynh_systemctl --service="$app" --wait_until='Seafile server started' --log_path=
 sleep 2
 ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=systemd
 ynh_systemctl --service="$app"-notification.service --wait_until="notification server started" --log_path=systemd
+ynh_systemctl --service="$app"-doc-server.service --wait_until="server is serve on http://127.0.0.1" --log_path=systemd
+ynh_systemctl --service="$app"-doc-converter.service --log_path=systemd
+if [ "$YNH_ARCH" != arm64 ]; then
+    ynh_systemctl --service="$app"-thumbnail.service --log_path=systemd
+fi
 
 ynh_script_progression "Installation of $app completed"

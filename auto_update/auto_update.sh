@@ -31,12 +31,37 @@ check_app_version() {
         app_version="$app_remote_version"
 
         docker_request_res="$(curl -s 'https://hub.docker.com/v2/repositories/seafileltd/notification-server/tags' -H 'Content-Type: application/json' |
-        jq -r '.results[]')"
+            jq -r '.results[]')"
         notification_remote_version=$(echo "$docker_request_res" | jq -r '.name' | sort -V | grep -P '^\d+\.\d+\.\d+$'  | tail -n1)
+
+        docker_request_res="$(curl -s 'https://hub.docker.com/v2/repositories/seafileltd/sdoc-server/tags' -H 'Content-Type: application/json' |
+            jq -r '.results[]')"
+        seadoc_remote_version=$(echo "$docker_request_res" | jq -r '.name' | sort -V | grep -P '^\d+\.\d+\.\d+$'  | tail -n1)
+
+        docker_request_res="$(curl -s 'https://hub.docker.com/v2/repositories/seafileltd/thumbnail-server/tags' -H 'Content-Type: application/json' |
+            jq -r '.results[]')"
+        thumbnail_remote_version=$(echo "$docker_request_res" | jq -r '.name' | sort -V | grep -P '^\d+\.\d+\.\d+$'  | tail -n1)
         return 0
     else
         return 1
     fi
+}
+
+update_docker_version() {
+    local source_id="$1"
+    local arch="$2"
+    local docker_id="$3"
+    local version="$4"
+
+    local checksum="$(curl -s "https://hub.docker.com/v2/repositories/seafileltd/$docker_id/tags" -H 'Content-Type: application/json' |
+        jq -r '.results[] | select(.name == "'"$version"'") | .images[] | select(.architecture == "amd64") | .digest' |
+        cut -d: -f2)"
+
+    prev_sha256sum="$(get_from_manifest ".resources.sources.$1.$2.sha256")"
+
+    # Update manifest
+    sed -r -i 's|"seafileltd/'"$3"':[[:alnum:].]{4,10}"|"seafileltd/seafile-mc:'"${version}"'"|' ../manifest.toml
+    sed -r -i "s|$prev_sha256sum|$checksum|" ../manifest.toml
 }
 
 upgrade_app() {
@@ -48,39 +73,16 @@ upgrade_app() {
             exit 1
         fi
 
-        # Main image
-        local docker_request_res="$(curl -s 'https://hub.docker.com/v2/repositories/seafileltd/seafile-mc/tags' -H 'Content-Type: application/json' |
-            jq -r '.results[]')"
-        local docker_main_checksum_amd64="$(echo "$docker_request_res" |
-            jq -r 'select(.name == "'"$app_version"'") | .images[] | select(.architecture == "amd64") | .digest' |
-            cut -d: -f2)"
-        local docker_main_checksum_arm64="$(echo "$docker_request_res" |
-            jq -r 'select(.name == "'"$app_version"'") | .images[] | select(.architecture == "arm64") | .digest' |
-            cut -d: -f2)"
-
-        # Notification server image
-        docker_request_res="$(curl -s 'https://hub.docker.com/v2/repositories/seafileltd/notification-server/tags' -H 'Content-Type: application/json' |
-            jq -r '.results[]')"
-        local docker_notification_checksum_amd64="$(echo "$docker_request_res" |
-            jq -r 'select(.name == "'"$notification_remote_version"'") | .images[] | select(.architecture == "amd64") | .digest' |
-            cut -d: -f2)"
-        local docker_notification_checksum_arm64="$(echo "$docker_request_res" |
-            jq -r 'select(.name == "'"$notification_remote_version"'") | .images[] | select(.architecture == "arm64") | .digest' |
-            cut -d: -f2)"
-
-        prev_main_sha256sum_amd64=$(get_from_manifest ".resources.sources.main.amd64.sha256")
-        prev_main_sha256sum_arm64=$(get_from_manifest ".resources.sources.main.arm64.sha256")
-        prev_notification_sha256sum_amd64=$(get_from_manifest ".resources.sources.notification_server.amd64.sha256")
-        prev_notification_sha256sum_arm64=$(get_from_manifest ".resources.sources.notification_server.arm64.sha256")
-
         # Update manifest
         sed -r -i 's|version = "[[:alnum:].]{4,8}~ynh[[:alnum:].]{1,2}"|version = "'"${app_version}"'~ynh1"|' ../manifest.toml
-        sed -r -i 's|"seafileltd/seafile-mc:[[:alnum:].]{4,10}"|"seafileltd/seafile-mc:'"${app_version}"'"|' ../manifest.toml
-        sed -r -i 's|"seafileltd/notification-server:[[:alnum:].]{4,10}"|"seafileltd/notification-server:'"${notification_remote_version}"'"|' ../manifest.toml
-        sed -r -i "s|$prev_main_sha256sum_amd64|$docker_main_checksum_amd64|" ../manifest.toml
-        sed -r -i "s|$prev_main_sha256sum_arm64|$docker_main_checksum_arm64|" ../manifest.toml
-        sed -r -i "s|$prev_notification_sha256sum_amd64|$docker_notification_checksum_amd64|" ../manifest.toml
-        sed -r -i "s|$prev_notification_sha256sum_arm64|$docker_notification_checksum_arm64|" ../manifest.toml
+
+        update_docker_version main amd64 seafile-mc "${app_version}"
+        update_docker_version main arm64 seafile-mc "${app_version}"
+        update_docker_version notification_server amd64 notification-server "${notification_remote_version}"
+        update_docker_version notification_server arm64 notification-server "${notification_remote_version}"
+        update_docker_version seadoc amd64 sdoc-server "${seadoc_remote_version}"
+        update_docker_version seadoc arm64 sdoc-server "${seadoc_remote_version}"
+        update_docker_version thumbnail_server amd64 thumbnail-server "$thumbnail_remote_version"
 
         git commit -a -m "Upgrade $app_name to $app_version"
         git push gitea auto_update:auto_update

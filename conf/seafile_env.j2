@@ -1,6 +1,11 @@
+TIME_ZONE={{ time_zone }}
 JWT_PRIVATE_KEY={{ jwt_private }}
+SITE_ROOT={{ path2 }}
+
 SEAFILE_SERVER_PROTOCOL=https
 SEAFILE_SERVER_HOSTNAME={{ domain }}
+
+# Database
 SEAFILE_MYSQL_DB_HOST=127.0.0.1
 SEAFILE_MYSQL_DB_PORT=3306
 SEAFILE_MYSQL_DB_USER={{ db_user }}
@@ -8,5 +13,7 @@ SEAFILE_MYSQL_DB_PASSWORD={{ db_pwd }}
 SEAFILE_MYSQL_DB_CCNET_DB_NAME=ccnetdb
 SEAFILE_MYSQL_DB_SEAFILE_DB_NAME={{ db_name }}
 SEAFILE_MYSQL_DB_SEAHUB_DB_NAME=seahubdb
-TIME_ZONE={{ time_zone }}
-SITE_ROOT={{ path2 }}
+
+# Seadoc
+ENABLE_SEADOC=true
+SEADOC_SERVER_URL=https://{{ domain }}{{ path2 }}sdoc
