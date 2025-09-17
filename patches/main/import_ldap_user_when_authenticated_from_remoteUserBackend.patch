@@ -1,21 +1,21 @@
 diff --git a/opt/seafile/seafile-server-__SEAFILE_VERSION__/seahub/seahub/auth/backends.py b/opt/seafile/seafile-server-__SEAFILE_VERSION__/seahub/seahub/auth/backends.py
-index 885e291c1..d79523691 100644
+index 885e291c1..00c44b268 100644
 --- a/opt/seafile/seafile-server-__SEAFILE_VERSION__/seahub/seahub/auth/backends.py
 +++ b/opt/seafile/seafile-server-__SEAFILE_VERSION__/seahub/seahub/auth/backends.py
 @@ -27,6 +27,9 @@ try:
  except ImportError:
      CUSTOM_GET_USER_ROLE = False
-
+ 
 +# BEGIN YNH PATCH
 +from seahub.base.accounts import CustomLDAPBackend
 +# END YNH PATCH
-
+ 
  # No longer maintained
  # Only used for old code of shibboleth authenticate
 @@ -97,6 +100,12 @@ class SeafileRemoteUserBackend(AuthBackend):
      auto_activate = getattr(settings,
                              'REMOTE_USER_ACTIVATE_USER_AFTER_CREATION', True)
-
+ 
 +    # BEGIN YNH PATCH
 +    import_from_ldap = getattr(settings, 'REMOTE_USER_IMPORT_FROM_LDAP',
 +                               True)
@@ -26,7 +26,7 @@ index 885e291c1..d79523691 100644
      # REMOTE_USER_ATTRIBUTE_MAP = {
      #     'HTTP_DISPLAYNAME': 'name',
 @@ -143,6 +152,12 @@ class SeafileRemoteUserBackend(AuthBackend):
-
+ 
          # get user from ccnet
          user = self.get_user(username)
 +
@@ -39,7 +39,7 @@ index 885e291c1..d79523691 100644
              # when user doesn't exist
              if not self.create_unknown_user:
 @@ -195,6 +210,11 @@ class SeafileRemoteUserBackend(AuthBackend):
-
+ 
          By default, returns the user unmodified.
          """
 +        # BEGIN YNH PATCH
@@ -47,15 +47,15 @@ index 885e291c1..d79523691 100644
 +            self.ldapBackend.authenticate(ldap_user=user.username, password=None, no_check_password=True)
 +            return
 +        # END YNH PATCH
-
+ 
          user_info = self.parse_user_info(request, user)
-
+ 
 diff --git a/opt/seafile/seafile-server-__SEAFILE_VERSION__/seahub/seahub/base/accounts.py b/opt/seafile/seafile-server-__SEAFILE_VERSION__/seahub/seahub/base/accounts.py
-index c6379c728..de892a6d6 100644
+index cd218032b..a856bd21f 100644
 --- a/opt/seafile/seafile-server-__SEAFILE_VERSION__/seahub/seahub/base/accounts.py
 +++ b/opt/seafile/seafile-server-__SEAFILE_VERSION__/seahub/seahub/base/accounts.py
 @@ -913,7 +913,10 @@ class CustomLDAPBackend(object):
-
+ 
      def search_user(self, server_url, admin_dn, admin_password, enable_sasl, sasl_mechanism,
                      sasl_authc_id_attr, base_dn, login_attr_conf, login_attr, password, serch_filter,
 -                    contact_email_attr, role_attr, follow_referrals):
@@ -64,36 +64,40 @@ index c6379c728..de892a6d6 100644
 +                    no_check_password=False):
 +                    # END YNH PATCH
          try:
-             admin_bind = self.ldap_bind(server_url, admin_dn, admin_dn, admin_password, enable_sasl, sasl_mechanism, follow_referrals)
-         except Exception as e:
-@@ -949,15 +952,20 @@ class CustomLDAPBackend(object):
+             admin_bind = self.ldap_bind(server_url, admin_dn, admin_dn,
+                                         admin_password, enable_sasl,
+@@ -951,17 +954,22 @@ class CustomLDAPBackend(object):
          except Exception as e:
              raise Exception('parse ldap result failed: %s' % e)
-
+ 
 -        try:
--            user_bind = self.ldap_bind(server_url, dn, authc_id, password, enable_sasl, sasl_mechanism, follow_referrals)
+-            user_bind = self.ldap_bind(server_url, dn, authc_id,
+-                                       password, enable_sasl,
+-                                       sasl_mechanism, follow_referrals)
 -        except Exception as e:
 -            raise Exception(e)
 +        # BEGIN YNH PATCH
 +        if not no_check_password:
 +            try:
-+                user_bind = self.ldap_bind(server_url, dn, authc_id, password, enable_sasl, sasl_mechanism, follow_referrals)
++                user_bind = self.ldap_bind(server_url, dn, authc_id,
++                                        password, enable_sasl,
++                                        sasl_mechanism, follow_referrals)
 +            except Exception as e:
 +                raise Exception(e)
-
+ 
 -        user_bind.unbind_s()
 +            user_bind.unbind_s()
 +        # END YNH PATCH
          return nickname, contact_email, user_role
-
+ 
 -    def authenticate(self, ldap_user=None, password=None):
 +    # BEGIN YNH PATCH
 +    def authenticate(self, ldap_user=None, password=None, no_check_password=False):
 +    # END YNH PATCH
          if not ENABLE_LDAP:
              return
-
-@@ -972,7 +980,9 @@ class CustomLDAPBackend(object):
+ 
+@@ -976,7 +984,9 @@ class CustomLDAPBackend(object):
              nickname, contact_email, user_role = self.search_user(
                  LDAP_SERVER_URL, LDAP_ADMIN_DN, LDAP_ADMIN_PASSWORD, ENABLE_SASL, SASL_MECHANISM,
                  SASL_AUTHC_ID_ATTR, LDAP_BASE_DN, LDAP_LOGIN_ATTR, login_attr, password, LDAP_FILTER,
@@ -104,7 +108,7 @@ index c6379c728..de892a6d6 100644
              ldap_provider = LDAP_PROVIDER
          except Exception as e:
              if ENABLE_MULTI_LDAP:
-@@ -987,7 +997,9 @@ class CustomLDAPBackend(object):
+@@ -991,7 +1001,9 @@ class CustomLDAPBackend(object):
                          MULTI_LDAP_1_SERVER_URL, MULTI_LDAP_1_ADMIN_DN, MULTI_LDAP_1_ADMIN_PASSWORD,
                          MULTI_LDAP_1_ENABLE_SASL, MULTI_LDAP_1_SASL_MECHANISM, MULTI_LDAP_1_SASL_AUTHC_ID_ATTR,
                          MULTI_LDAP_1_BASE_DN, MULTI_LDAP_1_LOGIN_ATTR, login_attr, password, MULTI_LDAP_1_FILTER,

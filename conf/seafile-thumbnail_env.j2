@@ -1,0 +1,24 @@
+TIME_ZONE={{ time_zone }}
+JWT_PRIVATE_KEY={{ jwt_private }}
+SITE_ROOT={{ path2 }}
+
+# Database
+SEAFILE_MYSQL_DB_HOST=127.0.0.1
+SEAFILE_MYSQL_DB_PORT=3306
+SEAFILE_MYSQL_DB_USER={{ db_user }}
+SEAFILE_MYSQL_DB_PASSWORD={{ db_pwd }}
+SEAFILE_MYSQL_DB_CCNET_DB_NAME=ccnetdb
+SEAFILE_MYSQL_DB_SEAFILE_DB_NAME={{ db_name }}
+
+SRC_DIR=/opt/seafile/
+LD_LIBRARY_PATH=/opt/seafile/seafile/lib/
+PYTHONPATH=/opt/seafile/seafile/lib/python3/site-packages/:/usr/lib/python3.12/dist-packages:/usr/lib/python3.12/site-packages:/usr/local/lib/python3.12/dist-packages:/usr/local/lib/python3.12/site-packages
+PATH=/opt/seafile/seafile/bin/:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+SEAFILE_CONF_DIR=/opt/seafile/seafile-data
+SEAFILE_CENTRAL_CONF_DIR=/opt/seafile/conf
+CONF_DIR=/opt/seafile/conf
+LOG_DIR=/opt/seafile/logs
+THUMBNAIL_ROOT=/opt/seafile/seahub-data/thumbnail
+
+INNER_SEAHUB_SERVICE_URL=https://{{ domain }}{{ path2 }}

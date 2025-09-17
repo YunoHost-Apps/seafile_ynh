@@ -1,0 +1,17 @@
+TIME_ZONE={{ time_zone }}
+JWT_PRIVATE_KEY={{ jwt_private }}
+
+# Database
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER={{ db_user }}
+DB_PASSWORD={{ db_pwd }}
+DB_NAME=seahubdb
+
+SEAHUB_SERVICE_URL=https://{{ domain }}{{ path2 }}
+
+SDOC_SERVER_CONFIG=/opt/sdoc-server/conf/sdoc_server_config.json
+CONF_PATH=/opt/sdoc-server/conf/
+LOG_DIR=/opt/sdoc-server/logs/
+SDOC_SERVER_DIR=/opt/sdoc-server/sdoc-server-latest/sdoc-server
+SERVER_PORT = {{ port_seadoc }}
