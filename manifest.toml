@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "13.0.9~ynh1"
+version = "13.0.11~ynh1"
 
 maintainers = ["Josué Tille"]
 
@@ -130,33 +130,33 @@ ram.runtime = "1G"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/seafile-mc:13.0.9"
-    amd64.sha256 = "0559e10b85240053048a6dffe176c043b8f42301ca101517ea81c3296ea8eb8a"
+    amd64.url = "seafileltd/seafile-mc:13.0.11"
+    amd64.sha256 = "20d5dfc0b88b90f1e87b0fccd7d4d2fa6cf1a3e7f0b546f5402a8c9c2e20a568"
 
-    arm64.url = "seafileltd/seafile-mc:13.0.9"
-    arm64.sha256 = "c05394dfab48c7d292051a2deba1a00050552be7ada88abd364dea8b21c31eb1"
+    arm64.url = "seafileltd/seafile-mc:13.0.11"
+    arm64.sha256 = "20d5dfc0b88b90f1e87b0fccd7d4d2fa6cf1a3e7f0b546f5402a8c9c2e20a568"
 
     [resources.sources.notification_server]
     format = "docker"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/notification-server:13.0.7"
-    amd64.sha256 = "74c31eb6ab133e4b2f64dd84c908617fe1f1af427b2d25958847b6fae7325862"
+    amd64.url = "seafileltd/notification-server:13.0.10"
+    amd64.sha256 = "a7159d04630bb4d0fcae56fb11294576ee1462fd98feb6fa27b2a2ee435b3945"
 
-    arm64.url = "seafileltd/notification-server:13.0.7"
-    arm64.sha256 = "531a1520fd12cd401ef7813d1cb86b9a57fdd5722eb2b2588c1026a159de0ec3"
+    arm64.url = "seafileltd/notification-server:13.0.10"
+    arm64.sha256 = "a7159d04630bb4d0fcae56fb11294576ee1462fd98feb6fa27b2a2ee435b3945"
 
     [resources.sources.seadoc]
     format = "docker"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/sdoc-server:2.0.6"
-    amd64.sha256 = "6d4b1918542d152dee3e0d92054ca3d3c45119f4c81ae251fae3806648527ab7"
+    amd64.url = "seafileltd/sdoc-server:2.0.7"
+    amd64.sha256 = "b0c24cbb7001f1488d93308161ceeab4f1d0be9e0b7de480c037e886c889497c"
 
-    arm64.url = "seafileltd/sdoc-server:2.0.6"
-    arm64.sha256 = "6d4b1918542d152dee3e0d92054ca3d3c45119f4c81ae251fae3806648527ab7"
+    arm64.url = "seafileltd/sdoc-server:2.0.7"
+    arm64.sha256 = "b0c24cbb7001f1488d93308161ceeab4f1d0be9e0b7de480c037e886c889497c"
 
     [resources.sources.thumbnail_server]
     format = "docker"
