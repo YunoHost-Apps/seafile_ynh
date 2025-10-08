@@ -59,12 +59,7 @@ fi
 #=================================================
 
 run_seafile_cmd() {
-    mkdir -p "/run/$app/pids"
-    ynh_hide_warnings systemd-run --wait --pipe --uid="$app" --gid="$app" \
-        --property=RootDirectory="$install_dir"/seafile_image \
-        --property="BindPaths=$systemd_seafile_bind_mount" \
-        --property=EnvironmentFile="$install_dir"/seafile_env.conf \
-        "$@"
+    ynh_hide_warnings "$install_dir/scripts/exec_in_seafile_image.sh" "$@"
 }
 
 update_pwd_group_shadow_in_docker() {
@@ -98,6 +93,18 @@ install_source() {
                     --replace="config = uvicorn.Config(app, port=$port_thumbnail)" \
                     --file="$thumbnail_server_image/opt/seafile/thumbnail-server/main.py"
     fi
+
+    # Install exec scripts
+    mkdir -p "$install_dir/scripts"
+    for s in \
+            exec_in_seafile_image.sh \
+            exec_in_seadoc_image.sh \
+            exec_in_seafile_notification_image.sh \
+            exec_in_thumbnail_image.sh; do
+        ynh_config_add --jinja --template="../sources/$s" --destination="$install_dir/scripts/$s"
+        chmod 700 "$install_dir/scripts/$s"
+        chown "root:root" "$install_dir/scripts/$s"
+    done
 }
 
 configure_env_files() {
