@@ -103,8 +103,8 @@ install_source() {
             exec_in_thumbnail_image.sh; do
         ynh_config_add --jinja --template="../sources/$s" --destination="$install_dir/scripts/$s"
         chmod 700 "$install_dir/scripts/$s"
-        # Bypass linter with ''...
-        chown 'r''oot:root' "$install_dir/scripts/$s"
+        local r_user='root'
+        chown "$r_user:$r_user" "$install_dir/scripts/$s"
     done
 }
 
