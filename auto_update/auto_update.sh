@@ -60,7 +60,7 @@ update_docker_version() {
     prev_sha256sum="$(get_from_manifest ".resources.sources.$1.$2.sha256")"
 
     # Update manifest
-    sed -r -i 's|"seafileltd/'"$3"':[[:alnum:].]{4,10}"|"seafileltd/seafile-mc:'"${version}"'"|' ../manifest.toml
+    sed -r -i 's|"seafileltd/'"$3"':[[:alnum:].]{4,10}"|"seafileltd/'"$3"':'"${version}"'"|' ../manifest.toml
     sed -r -i "s|$prev_sha256sum|$checksum|" ../manifest.toml
 }
 
