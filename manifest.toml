@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "13.0.11~ynh2"
+version = "13.0.12~ynh1"
 
 maintainers = ["Josué Tille"]
 
@@ -130,11 +130,11 @@ ram.runtime = "1G"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/seafile-mc:13.0.11"
-    amd64.sha256 = "20d5dfc0b88b90f1e87b0fccd7d4d2fa6cf1a3e7f0b546f5402a8c9c2e20a568"
+    amd64.url = "seafileltd/seafile-mc:13.0.12"
+    amd64.sha256 = "312197aca67ec2066aefea4a0fa43d6f7cb65d45590c96ae38fe79aa44a5cdb9"
 
-    arm64.url = "seafileltd/seafile-mc:13.0.11"
-    arm64.sha256 = "20d5dfc0b88b90f1e87b0fccd7d4d2fa6cf1a3e7f0b546f5402a8c9c2e20a568"
+    arm64.url = "seafileltd/seafile-mc:13.0.12"
+    arm64.sha256 = "312197aca67ec2066aefea4a0fa43d6f7cb65d45590c96ae38fe79aa44a5cdb9"
 
     [resources.sources.notification_server]
     format = "docker"
@@ -152,19 +152,19 @@ ram.runtime = "1G"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/sdoc-server:2.0.7"
-    amd64.sha256 = "b0c24cbb7001f1488d93308161ceeab4f1d0be9e0b7de480c037e886c889497c"
+    amd64.url = "seafileltd/sdoc-server:2.0.8"
+    amd64.sha256 = "50dab9bea6d3efb33d496e2d541d674ac4ca892b916f761ffe17beafb9014682"
 
-    arm64.url = "seafileltd/sdoc-server:2.0.7"
-    arm64.sha256 = "b0c24cbb7001f1488d93308161ceeab4f1d0be9e0b7de480c037e886c889497c"
+    arm64.url = "seafileltd/sdoc-server:2.0.8"
+    arm64.sha256 = "50dab9bea6d3efb33d496e2d541d674ac4ca892b916f761ffe17beafb9014682"
 
     [resources.sources.thumbnail_server]
     format = "docker"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/thumbnail-server:13.0.9"
-    amd64.sha256 = "5eee6d7f4892588608f7216cc5c34fc959d7d7424dbed4fc5a07997f77776704"
+    amd64.url = "seafileltd/thumbnail-server:13.0.12"
+    amd64.sha256 = "04e049f308eec5f64b40e942f9553e5ae3de0a05fac2d9a86e1bd374beab0cae"
 
     [resources.apt]
     packages = ["mariadb-server", "redis-server"]
