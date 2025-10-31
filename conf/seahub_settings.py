@@ -37,7 +37,7 @@ LOGIN_URL = '{{ path2 }}accounts/login/'
 ENABLE_LDAP = True
 
 # The URL of LDAP server
-LDAP_SERVER_URL = 'ldap://localhost:389'
+LDAP_SERVER_URL = 'ldap://127.0.0.1:389'
 
 # The root node of users who can log in to Seafile in the LDAP server
 LDAP_BASE_DN = 'ou=users,dc=yunohost,dc=org'
