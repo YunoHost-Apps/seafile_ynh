@@ -33,7 +33,7 @@ pkill -f seaf-server || true
 pkill -f ccnet-server || true
 pkill -f seahub || true
 
-ynh_script_progression "Updating seafile configuration..."
+ynh_script_progression "Updating Seafile configuration..."
 
 # Update Seafile Config
 ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py

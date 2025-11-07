@@ -72,9 +72,9 @@ run_seafile_cmd bash "/opt/seafile/seafile-server-$seafile_version/setup-seafile
 seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)
 ynh_app_setting_set --key=seahub_secret_key --value="$seahub_secret_key"
 
-# Update seafile config files
+# Update Seafile config files
 if [ "$(lsb_release -c -s)" == bullseye ]; then
-    # Fix header for retro compability on Yunohost 11
+    # Fix header for retro compability on YunoHost 11
     ynh_replace --match="'HTTP_YNH_USER_EMAIL'" --replace="'HTTP_EMAIL'" --file="../conf/seahub_settings.py"
 fi
 ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
@@ -97,7 +97,7 @@ ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seaf
 ynh_script_progression "Configuring $app's systemd service..."
 configure_systemd_services
 
-# register yunohost service
+# register YunoHost service
 yunohost service add "$app" --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
 yunohost service add "$app"-notification --description 'Seafile client notification server.'
@@ -108,7 +108,7 @@ if [ "$YNH_ARCH" != arm64 ]; then
 fi
 
 # Config nginx
-ynh_script_progression "Configuring nginx..."
+ynh_script_progression "Configuring NGINX..."
 ynh_config_add_nginx
 
 # Add logrotate
@@ -116,7 +116,7 @@ ynh_script_progression "Configuring log rotation..."
 ynh_config_add_logrotate /var/log/"$app"
 
 # Add fail2ban
-ynh_script_progression "Configuring fail2ban..."
+ynh_script_progression "Configuring Fail2Ban..."
 ynh_config_add_fail2ban --logpath="$install_dir"/logs/seahub.log
 
 #=================================================

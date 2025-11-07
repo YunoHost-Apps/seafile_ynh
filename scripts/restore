@@ -52,7 +52,7 @@ if [ "$YNH_ARCH" != arm64 ]; then
 fi
 
 # Add Seafile to YunoHost's monitored services
-ynh_script_progression "Register seafile service..."
+ynh_script_progression "Register Seafile service..."
 yunohost service add "$app" --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
 yunohost service add "$app"-notification --description 'Seafile client notification server.'
@@ -64,17 +64,17 @@ fi
 
 ynh_script_progression "Reloading services..."
 
-# Reload nginx
+# Reload NGINX
 systemctl reload nginx.service
 
-# Reload fail2ban
+# Reload Fail2Ban
 ynh_systemctl --service=fail2ban --action=reload
 
 # Avoid the current effect
 sleep 5
 
 # Restart service
-ynh_script_progression "Starting seafile services..."
+ynh_script_progression "Starting Seafile services..."
 ynh_systemctl --service="$app" --wait_until='Seafile server started' --log_path=systemd
 sleep 2
 ynh_systemctl --service=seahub --wait_until='Seahub is started' --log_path=systemd

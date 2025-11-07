@@ -45,18 +45,18 @@ if [ "$YNH_ARCH" != arm64 ]; then
     ynh_config_remove_systemd "$app-thumbnail"
 fi
 
-# Remove nginx config
-ynh_script_progression "Removing nginx configuration..."
+# Remove NGINX config
+ynh_script_progression "Removing NGINX configuration..."
 ynh_config_remove_nginx
 
 # Remove logrotate
 ynh_config_remove_logrotate
 
-# Remove the dedicated fail2ban config
-ynh_script_progression "Removing fail2ban configuration..."
+# Remove the dedicated Fail2Ban config
+ynh_script_progression "Removing Fail2Ban configuration..."
 ynh_config_remove_fail2ban
 
-ynh_script_progression "Removing seafile service..."
+ynh_script_progression "Removing Seafile service..."
 yunohost service remove "$app"
 yunohost service remove seahub
 yunohost service remove "$app"-notification

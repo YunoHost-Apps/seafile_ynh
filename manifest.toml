@@ -2,8 +2,8 @@ packaging_format = 2
 
 id = "seafile"
 name = "Seafile"
-description.en = "Open Source Cloud Storage"
-description.fr = "Stockage Cloud Open Source"
+description.en = "Open source cloud storage"
+description.fr = "Stockage cloud open source"
 
 version = "13.0.12~ynh1"
 
@@ -22,19 +22,21 @@ yunohost = ">= 11.2.30"
 helpers_version = "2.1"
 architectures = ["amd64", "arm64"]
 multi_instance = false
+
 ldap = true
 sso = true
+
 disk = "5G"
 ram.build = "0M"
 ram.runtime = "1G"
 
 [install]
     [install.domain]
-    # this is a generic question - ask strings are automatically handled by Yunohost's core
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
     type = "domain"
 
     [install.path]
-    # this is a generic question - ask strings are automatically handled by Yunohost's core
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
     type = "path"
     default = "/seafile"
 
@@ -46,7 +48,7 @@ ram.runtime = "1G"
     default = "Seafile"
 
     [install.admin]
-    # this is a generic question - ask strings are automatically handled by Yunohost's core
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
     type = "user"
 
     [install.admin_password]

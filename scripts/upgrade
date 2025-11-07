@@ -112,7 +112,7 @@ case "$installed_version" in
 	ynh_die "Upgrade form the version 4.x was removed. Upgrade from this version won't be supported any more."
 ;&
 "5."* )
-	# Update seafile by script
+	# Update Seafile by script
 	ynh_die "Upgrade form the version 5.x was removed. Upgrade from this version won't be supported any more."
 ;&
 "6."* )
@@ -122,7 +122,7 @@ case "$installed_version" in
     # Fix file comment
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/seahub.sh" python-env python3 "/opt/seafile/seafile-server-$seafile_version/seahub/manage.py" migrate_file_comment
 
-    # Update seafile by script
+    # Update Seafile by script
     ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_7.0_7.1.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_7.0_7.1.sh"
 
@@ -164,12 +164,12 @@ run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/minor-upgr
 # Clean expired sessions, cf: https://manual.seafile.com/12.0/administration/clean_database/
 run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version//seahub.sh" python-env python3 seahub/manage.py clearsessions
 
-# Clean url in config in DB
+# Clean URL in config in DB
 clean_url_in_db_config
 
-# Update seafile config files
+# Update Seafile config files
 if [ "$(lsb_release -c -s)" == bullseye ]; then
-    # Fix header for retro compability on Yunohost 11
+    # Fix header for retro compability on YunoHost 11
     ynh_replace --match="'HTTP_YNH_USER_EMAIL'" --replace="'HTTP_EMAIL'" --file="../conf/seahub_settings.py"
 fi
 ynh_config_add --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
@@ -183,14 +183,14 @@ ynh_replace --match=en_US.UTF-8 --replace="${LANG:-'en_US.UTF-8'}" --file="$seaf
 
 #=================================================
 
-# Config nginx
+# Config NGINX
 ynh_config_add_nginx 'seahub_port fileserver_port webdav_port'
 
 # Add Seafile Server to startup
 ynh_script_progression "Configuring $app's systemd service..."
 configure_systemd_services
 
-# register yunohost service
+# register YunoHost service
 yunohost service add "$app" --description 'Main service for seafile server.'
 yunohost service add seahub --description 'Seafile server web interface.'
 yunohost service add "$app"-notification --description 'Seafile client notification server.'
@@ -210,13 +210,13 @@ set_permission
 ynh_script_progression "Configuring log rotation..."
 ynh_config_add_logrotate /var/log/"$app"
 
-# Add fail2ban
+# Add Fail2Ban
 ynh_script_progression "Configuring fail2ban..."
 ynh_config_add_fail2ban --logpath="$install_dir"/logs/seahub.log
 
-# delete seafile cache
+# delete Seafile cache
 
-# restart seafile server
+# restart Seafile server
 ynh_script_progression "Starting seafile services..."
 ynh_systemctl --service="$app" --wait_until='Seafile server started' --log_path=systemd
 sleep 2
