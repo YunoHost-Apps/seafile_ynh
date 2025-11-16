@@ -63,9 +63,13 @@ run_seafile_cmd() {
 }
 
 update_pwd_group_shadow_in_docker() {
+    # We remove all entries to just keep root + seafile users in the docker because we need to avoid any collision with other user ID which already in the
+    echo 'root:x:0:0:root:/root:/bin/bash' > "$1/etc/passwd"
     grep "^$app:x" /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$1/etc/passwd"
+
+    echo 'root:x:0:' > "$1/etc/group"
     grep "^$app:x" /etc/group >> "$1/etc/group"
-    grep "^$app:x" /etc/group- >> "$1/etc/group-"
+
     grep "^$app:"  /etc/shadow >> "$1/etc/shadow"
 }
 
