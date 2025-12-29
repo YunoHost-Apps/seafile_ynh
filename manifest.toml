@@ -137,10 +137,10 @@ ram.runtime = "1G"
     prefetch = false
 
     amd64.url = "seafileltd/seafile-mc:13.0.15"
-    amd64.sha256 = "1a31a792f80a75825416e0b9a36bc31f23e9eab51105ede65123104f59c7f682"
+    amd64.sha256 = "empty because it's not used..."
 
     arm64.url = "seafileltd/seafile-mc:13.0.15"
-    arm64.sha256 = "1a31a792f80a75825416e0b9a36bc31f23e9eab51105ede65123104f59c7f682"
+    arm64.sha256 = "empty because it's not used..."
 
     [resources.sources.notification_server]
     format = "docker"
@@ -148,10 +148,10 @@ ram.runtime = "1G"
     prefetch = false
 
     amd64.url = "seafileltd/notification-server:13.0.10"
-    amd64.sha256 = "a7159d04630bb4d0fcae56fb11294576ee1462fd98feb6fa27b2a2ee435b3945"
+    amd64.sha256 = "empty because it's not used..."
 
     arm64.url = "seafileltd/notification-server:13.0.10"
-    arm64.sha256 = "a7159d04630bb4d0fcae56fb11294576ee1462fd98feb6fa27b2a2ee435b3945"
+    arm64.sha256 = "empty because it's not used..."
 
     [resources.sources.seadoc]
     format = "docker"
@@ -159,10 +159,10 @@ ram.runtime = "1G"
     prefetch = false
 
     amd64.url = "seafileltd/sdoc-server:2.0.9"
-    amd64.sha256 = "bd3fd16e0a9a72e673b1b6f482e9a084155aff9023de03f5ed98a51ad1ffe1cb"
+    amd64.sha256 = "empty because it's not used..."
 
     arm64.url = "seafileltd/sdoc-server:2.0.9"
-    arm64.sha256 = "bd3fd16e0a9a72e673b1b6f482e9a084155aff9023de03f5ed98a51ad1ffe1cb"
+    arm64.sha256 = "empty because it's not used..."
 
     [resources.sources.thumbnail_server]
     format = "docker"
@@ -170,7 +170,7 @@ ram.runtime = "1G"
     prefetch = false
 
     amd64.url = "seafileltd/thumbnail-server:13.0.15"
-    amd64.sha256 = "74b38d69e3b2e05472bf42d11f53dcddf7405b590f5b40833b6d17d8a9e0443a"
+    amd64.sha256 = "empty because it's not used..."
 
     [resources.apt]
     packages = ["mariadb-server", "redis-server"]

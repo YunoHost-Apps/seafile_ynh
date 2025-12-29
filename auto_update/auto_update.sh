@@ -61,7 +61,8 @@ update_docker_version() {
 
     # Update manifest
     sed -r -i 's|"seafileltd/'"$3"':[[:alnum:].]{4,10}"|"seafileltd/'"$3"':'"${version}"'"|' ../manifest.toml
-    sed -r -i "s|$prev_sha256sum|$checksum|" ../manifest.toml
+    # Don't update checksum because it's not used by docker extract
+    #sed -r -i "s|$prev_sha256sum|$checksum|" ../manifest.toml
 }
 
 upgrade_app() {
