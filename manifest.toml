@@ -23,6 +23,7 @@ helpers_version = "2.1"
 architectures = [
     "amd64"
 # Disable arm64 for now because the last build don't provide ARM64 build.
+# See discussion https://github.com/YunoHost-Apps/seafile_ynh/issues/177
 #   , "arm64"
 ]
 multi_instance = false
