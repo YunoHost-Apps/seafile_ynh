@@ -18,7 +18,7 @@ code = "https://github.com/haiwen/seafile-server"
 cpe = "cpe:2.3:a:seafile:seafile"
 
 [integration]
-yunohost = ">= 11.2.30"
+yunohost = ">= 12.1.38"
 helpers_version = "2.1"
 architectures = ["amd64", "arm64"]
 multi_instance = false
