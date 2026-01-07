@@ -50,10 +50,6 @@ else
     readonly language="${LANG:0:2}"
 fi
 
-if [ "$YNH_ARCH" == arm64 ]; then
-    port_thumbnail="$port_seahub"
-fi
-
 #=================================================
 # DEFINE ALL COMMON FONCTIONS
 #=================================================
@@ -87,16 +83,14 @@ install_source() {
     update_pwd_group_shadow_in_docker "$seadoc_image"
     mkdir -p "$seadoc_image/opt/sdoc-server/"{logs,conf}
 
-    if [ "$YNH_ARCH" != arm64 ]; then
-        ynh_setup_source_custom --dest_dir="$thumbnail_server_image" --full_replace --source_id=thumbnail_server
-        update_pwd_group_shadow_in_docker "$thumbnail_server_image"
-        mkdir -p "$thumbnail_server_image/opt/seafile/"{seafile-data,seahub-data,conf,logs}
+    ynh_setup_source_custom --dest_dir="$thumbnail_server_image" --full_replace --source_id=thumbnail_server
+    update_pwd_group_shadow_in_docker "$thumbnail_server_image"
+    mkdir -p "$thumbnail_server_image/opt/seafile/"{seafile-data,seahub-data,conf,logs}
 
-        # workaround until https://github.com/haiwen/seafile-thumbnail-server/pull/11 is merged and released
-        ynh_replace --match='config = uvicorn.Config(app, port=8088)' \
-                    --replace="config = uvicorn.Config(app, port=$port_thumbnail)" \
-                    --file="$thumbnail_server_image/opt/seafile/thumbnail-server/main.py"
-    fi
+    # workaround until https://github.com/haiwen/seafile-thumbnail-server/pull/11 is merged and released
+    ynh_replace --match='config = uvicorn.Config(app, port=8088)' \
+                --replace="config = uvicorn.Config(app, port=$port_thumbnail)" \
+                --file="$thumbnail_server_image/opt/seafile/thumbnail-server/main.py"
 
     # Install exec scripts
     mkdir -p "$install_dir/scripts"
@@ -126,9 +120,7 @@ configure_systemd_services() {
     ynh_config_add_systemd --service="$app-notification" --template=seafile-notification.service
     ynh_config_add_systemd --service="$app-doc-server" --template=seafile-doc-server.service
     ynh_config_add_systemd --service="$app-doc-converter" --template=seafile-doc-converter.service
-    if [ "$YNH_ARCH" != arm64 ]; then
-        ynh_config_add_systemd --service="$app-thumbnail" --template=seafile-thumbnail.service
-    fi
+    ynh_config_add_systemd --service="$app-thumbnail" --template=seafile-thumbnail.service
 }
 
 set_permission() {
