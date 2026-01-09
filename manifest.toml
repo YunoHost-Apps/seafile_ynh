@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open source cloud storage"
 description.fr = "Stockage cloud open source"
 
-version = "13.0.15~ynh1"
+version = "13.0.15~ynh2"
 
 maintainers = ["Josué Tille"]
 
@@ -18,14 +18,9 @@ code = "https://github.com/haiwen/seafile-server"
 cpe = "cpe:2.3:a:seafile:seafile"
 
 [integration]
-yunohost = ">= 11.2.30"
+yunohost = ">= 12.1.38"
 helpers_version = "2.1"
-architectures = [
-    "amd64"
-# Disable arm64 for now because the last build don't provide ARM64 build.
-# See discussion https://github.com/YunoHost-Apps/seafile_ynh/issues/177
-#   , "arm64"
-]
+architectures = ["amd64", "arm64"]
 multi_instance = false
 
 ldap = true
@@ -172,6 +167,9 @@ ram.runtime = "1G"
 
     amd64.url = "seafileltd/thumbnail-server:13.0.15"
     amd64.sha256 = "empty because it's not used..."
+
+    arm64.url = "seafileltd/thumbnail-server:13.0.15"
+    arm64.sha256 = "empty because it's not used..."
 
     [resources.apt]
     packages = ["mariadb-server", "redis-server"]

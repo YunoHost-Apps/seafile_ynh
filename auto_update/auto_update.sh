@@ -84,6 +84,7 @@ upgrade_app() {
         update_docker_version seadoc amd64 sdoc-server "${seadoc_remote_version}"
         update_docker_version seadoc arm64 sdoc-server "${seadoc_remote_version}"
         update_docker_version thumbnail_server amd64 thumbnail-server "$thumbnail_remote_version"
+        update_docker_version thumbnail_server arm64 thumbnail-server "$thumbnail_remote_version"
 
         git commit -a -m "Upgrade $app_name to $app_version"
         git push gitea auto_update:auto_update
