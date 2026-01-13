@@ -41,9 +41,7 @@ ynh_config_remove_systemd seahub
 ynh_config_remove_systemd "$app-notification"
 ynh_config_remove_systemd "$app-doc-server"
 ynh_config_remove_systemd "$app-doc-converter"
-if [ "$YNH_ARCH" != arm64 ]; then
-    ynh_config_remove_systemd "$app-thumbnail"
-fi
+ynh_config_remove_systemd "$app-thumbnail"
 
 # Remove NGINX config
 ynh_script_progression "Removing NGINX configuration..."
@@ -62,9 +60,7 @@ yunohost service remove seahub
 yunohost service remove "$app"-notification
 yunohost service remove "$app-doc-server"
 yunohost service remove "$app-doc-converter"
-if [ "$YNH_ARCH" != arm64 ]; then
-    yunohost service remove "$app-thumbnail"
-fi
+yunohost service remove "$app-thumbnail"
 
 ynh_script_progression "Removal of $app completed"
 
