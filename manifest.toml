@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open source cloud storage"
 description.fr = "Stockage cloud open source"
 
-version = "13.0.15~ynh2"
+version = "13.0.17~ynh1"
 
 maintainers = ["Josué Tille"]
 
@@ -132,10 +132,10 @@ ram.runtime = "1G"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/seafile-mc:13.0.15"
+    amd64.url = "seafileltd/seafile-mc:13.0.17"
     amd64.sha256 = "empty because it's not used..."
 
-    arm64.url = "seafileltd/seafile-mc:13.0.15"
+    arm64.url = "seafileltd/seafile-mc:13.0.17"
     arm64.sha256 = "empty because it's not used..."
 
     [resources.sources.notification_server]
@@ -165,10 +165,10 @@ ram.runtime = "1G"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/thumbnail-server:13.0.15"
+    amd64.url = "seafileltd/thumbnail-server:13.0.16"
     amd64.sha256 = "empty because it's not used..."
 
-    arm64.url = "seafileltd/thumbnail-server:13.0.15"
+    arm64.url = "seafileltd/thumbnail-server:13.0.16"
     arm64.sha256 = "empty because it's not used..."
 
     [resources.apt]
