@@ -88,8 +88,8 @@ install_source() {
     mkdir -p "$thumbnail_server_image/opt/seafile/"{seafile-data,seahub-data,conf,logs}
 
     # workaround until https://github.com/haiwen/seafile-thumbnail-server/pull/11 is merged and released
-    ynh_replace --match='config = uvicorn.Config(app, port=8088)' \
-                --replace="config = uvicorn.Config(app, port=$port_thumbnail)" \
+    ynh_replace --match='config = uvicorn.Config(app, port=8088' \
+                --replace="config = uvicorn.Config(app, port=$port_thumbnail" \
                 --file="$thumbnail_server_image/opt/seafile/thumbnail-server/main.py"
 
     # Install exec scripts
