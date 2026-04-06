@@ -23,6 +23,7 @@ ynh_systemctl --service=seahub --action=stop
 ynh_systemctl --service="$app"-notification.service --action=stop
 ynh_systemctl --service="$app"-doc-server.service --action=stop
 ynh_systemctl --service="$app"-doc-converter.service --action=stop
+ynh_systemctl --service="$app"-thumbnail.service --action=stop
 sleep 5
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
