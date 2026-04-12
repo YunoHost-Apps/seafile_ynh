@@ -5,6 +5,10 @@ SITE_ROOT={{ path2 }}
 SEAFILE_SERVER_PROTOCOL=https
 SEAFILE_SERVER_HOSTNAME={{ domain }}
 
+# Seafile 13's fileserver reads notification support from env, not seafile.conf.
+ENABLE_NOTIFICATION_SERVER=true
+INNER_NOTIFICATION_SERVER_URL=http://127.0.0.1:{{ port_notificationserver }}
+
 # Database
 SEAFILE_MYSQL_DB_HOST=127.0.0.1
 SEAFILE_MYSQL_DB_PORT=3306
