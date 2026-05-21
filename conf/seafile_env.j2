@@ -21,3 +21,11 @@ SEAFILE_MYSQL_DB_SEAHUB_DB_NAME=seahubdb
 # Seadoc
 ENABLE_SEADOC=true
 SEADOC_SERVER_URL=https://{{ domain }}{{ path2 }}sdoc
+
+# Note we are setting here memcached but in reality it's just to disable cache.
+# In are in case when:
+# We use redis for seahub and it's epxected to work
+# WE don't use any cache for seafile-server because
+# - We can't specify the db ID for redis cf https://github.com/haiwen/seafile-server/pull/805
+# - We memcached is note supported after analizing the code, the configuration is taken into account only if redis is set as provider
+CACHE_PROVIDER=memcached
