@@ -77,14 +77,14 @@ ram.runtime = "1G"
     main.url = "/"
     main.additional_urls = ["__DOMAIN__/socket.io"]
 
-    file_server.url = "__DOMAIN__/seafhttp"
+    file_server.url = "/seafhttp"
     file_server.label = "File server"
     file_server.allowed = "visitors"
     file_server.auth_header = false
     file_server.show_tile = false
     file_server.protected = true
 
-    notification.url = "__DOMAIN__/notification"
+    notification.url = "/notification"
     notification.label = "Client-notification"
     notification.allowed = "visitors"
     notification.auth_header = false
@@ -98,7 +98,7 @@ ram.runtime = "1G"
     seadoc.show_tile = false
     seadoc.protected = true
 
-    webdav.url = "__DOMAIN__/seafdav"
+    webdav.url = "/seafdav"
     webdav.label = "Webdav"
     webdav.allowed = "visitors"
     webdav.auth_header = false
