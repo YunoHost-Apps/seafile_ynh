@@ -1,0 +1,20 @@
+version = "1.0"
+
+[main]
+name = "Main configuration"
+services = ["__APP__"]
+
+    [main.file_size]
+    name = "Manage Media growth and clean-up"
+
+        [main.file_size.max_upload_size]
+        ask = "Set maximum upload file size in Megabytes"
+        type = "number"
+        min = 10
+        help = "Defaults to: '1000M'."
+
+        [main.file_size.max_download_dir_size]
+        ask = "Set maximum download directory size in Megabytes"
+        type = "number"
+        min = 10
+        help = "Defaults to: '100M'."

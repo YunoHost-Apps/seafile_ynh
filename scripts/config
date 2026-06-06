@@ -1,0 +1,16 @@
+#!/bin/bash
+
+source ./_common.sh
+
+ynh_app_config_apply() {
+    _ynh_app_config_apply
+    ynh_config_add_nginx
+    ynh_config_add --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
+
+    set_permission
+}
+
+#=================================================
+# SELECT THE ACTION FOLLOWING THE GIVEN ARGUMENT
+#=================================================
+ynh_app_config_run "$1"
