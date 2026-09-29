@@ -26,6 +26,7 @@ test_format = 1.0
     test_upgrade_from.5a4717a.name = "Before helper 2.1"
     test_upgrade_from.f6160e7.name = "Seafile 11"
     test_upgrade_from.26e5265.name = "Seafile 12"
+    test_upgrade_from.f96979abc28f0daecdd7a7657c1654ccbd3f2a53.name = "Seafile 13.0.15"
 
     # -------------------------------
     # Curl tests to validate that the app works
