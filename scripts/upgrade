@@ -157,7 +157,17 @@ case "$installed_version" in
     ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_11.0_12.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_11.0_12.0.sh"
 ;&
+"12."* )
+    ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_12.0_13.0.sh"
+    run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_12.0_13.0.sh"
+;&
 esac
+
+# Fix missing migration cf: #206
+if [ -z "$(ynh_mysql_db_shell <<< "SHOW TABLES LIKE 'notifications_sysusernotification';" --database=seahubdb)" ]; then
+    ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/upgrade_12.0_13.0.sh"
+    run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_12.0_13.0.sh"
+fi
 
 ynh_replace --match='read dummy' --replace='# patched' --file="$seafile_code/upgrade/minor-upgrade.sh"
 run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/minor-upgrade.sh"
