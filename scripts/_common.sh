@@ -76,6 +76,17 @@ install_source() {
     update_pwd_group_shadow_in_docker "$seafile_image"
     mkdir -p "$seafile_image/opt/seafile/"{seafile-data,seahub-data,conf,ccnet,logs,pids}
 
+    # Force seahub to use redis as cache even if the environment is set to memcached (see comment in sesafile_env config)
+    # cf https://github.com/YunoHost-Apps/seafile_ynh/issues/203#
+    cat << EOF >> "$seafile_image/opt/seafile/seafile-server-$seafile_version/seahub/seahub/settings.py"
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/$redis_db',
+    },
+}
+EOF
+
     ynh_setup_source_custom --dest_dir="$notification_image" --full_replace --source_id=notification_server
     update_pwd_group_shadow_in_docker "$notification_image"
 

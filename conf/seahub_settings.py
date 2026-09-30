@@ -16,13 +16,6 @@ DATABASES = {
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/{{ redis_db }}',
-    },
-}
-
 FILE_SERVER_ROOT = "https://{{ domain }}/seafhttp"
 SERVE_STATIC = False
 MEDIA_URL = "{{ path2 }}media/"
@@ -352,10 +345,6 @@ SITE_NAME = 'Seafile'
 
 # Browser tab's title
 SITE_TITLE = 'Private Seafile'
-
-# If you don't want to run seahub website on your site's root path, set this option to your preferred path.
-# e.g. setting it to '/seahub/' would run seahub on http://example.com/seahub/.
-SITE_ROOT = "{{ path2 }}"
 
 # Max number of files when user upload file/folder.
 # Since version 6.0.4
