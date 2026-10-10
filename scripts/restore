@@ -16,6 +16,13 @@ ynh_script_progression "Loading settings..."
 # Restore all config and data
 ynh_script_progression "Restoring files..."
 ynh_restore_everything
+
+seafile_uid="$(grep "^$app:" /etc/passwd | cut -d: -f3)"
+seafile_gid="$(grep "^$app:" /etc/passwd | cut -d: -f4)"
+for image in "$seafile_image" "$notification_image" "$seadoc_image" "$thumbnail_server_image"; do
+    sed -Ei "s|^($app:[^:]*:)[^:]*:[^:]*:|\\1$seafile_uid:$seafile_gid:|" "$image/etc/passwd"
+done
+
 # Restore mysql dump
 ynh_script_progression "Restoring database..."
 ynh_''mysql_create_db ccnetdb "$db_user" "$db_pwd"
