@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open source cloud storage"
 description.fr = "Stockage cloud open source"
 
-version = "13.0.28~ynh1"
+version = "13.0.30~ynh1"
 
 maintainers = ["Josué Tille"]
 
@@ -132,10 +132,10 @@ ram.runtime = "1G"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/seafile-mc:13.0.28"
+    amd64.url = "seafileltd/seafile-mc:13.0.30"
     amd64.sha256 = "empty because it's not used..."
 
-    arm64.url = "seafileltd/seafile-mc:13.0.28"
+    arm64.url = "seafileltd/seafile-mc:13.0.30"
     arm64.sha256 = "empty because it's not used..."
 
     [resources.sources.notification_server]
@@ -143,10 +143,10 @@ ram.runtime = "1G"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/notification-server:13.0.21"
+    amd64.url = "seafileltd/notification-server:13.0.29"
     amd64.sha256 = "empty because it's not used..."
 
-    arm64.url = "seafileltd/notification-server:13.0.21"
+    arm64.url = "seafileltd/notification-server:13.0.29"
     arm64.sha256 = "empty because it's not used..."
 
     [resources.sources.seadoc]
@@ -154,10 +154,10 @@ ram.runtime = "1G"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/sdoc-server:2.0.9"
+    amd64.url = "seafileltd/sdoc-server:2.0.14"
     amd64.sha256 = "empty because it's not used..."
 
-    arm64.url = "seafileltd/sdoc-server:2.0.9"
+    arm64.url = "seafileltd/sdoc-server:2.0.14"
     arm64.sha256 = "empty because it's not used..."
 
     [resources.sources.thumbnail_server]
@@ -165,10 +165,10 @@ ram.runtime = "1G"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/thumbnail-server:13.0.20"
+    amd64.url = "seafileltd/thumbnail-server:13.0.29"
     amd64.sha256 = "empty because it's not used..."
 
-    arm64.url = "seafileltd/thumbnail-server:13.0.20"
+    arm64.url = "seafileltd/thumbnail-server:13.0.29"
     arm64.sha256 = "empty because it's not used..."
 
     [resources.apt]
